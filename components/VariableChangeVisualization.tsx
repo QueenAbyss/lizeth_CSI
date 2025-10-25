@@ -197,7 +197,7 @@ const VariableChangeVisualization: React.FC<VariableChangeVisualizationProps> = 
     
     for (let x = xDomain[0]; x <= xDomain[1]; x += step) {
       const u = currentTransform.calculateTransformation(x, transformationValue)
-      const y = u * u // f(u) = u² (después de la transformación)
+      const y = x * x // f(x) = x² (la función original evaluada en x)
       if (Math.abs(y) <= yDomain[1] && Math.abs(u) <= xDomain[1]) {
         points.push({ x: u, y })
       }
@@ -362,7 +362,7 @@ const VariableChangeVisualization: React.FC<VariableChangeVisualizationProps> = 
       .style('font-size', '14px')
       .style('font-weight', 'bold')
       .style('fill', currentTransform.transformedColor)
-      .text('f(u) = x²')
+      .text('f(u) = u²')
 
     // Dibujar flecha de transformación
     const arrowStartX = xScale(2)
