@@ -88,8 +88,7 @@ export class Estudiante extends Usuario {
             // Propiedades específicas del Teorema del Valor Medio
             puntoCEncontrado: this.progreso.puntoCEncontrado || false,
             precisionEstimacion: this.progreso.precisionEstimacion || 0,
-            pendienteCalculada: this.progreso.pendienteCalculada || false,
-            teoremaVerificado: this.progreso.teoremaVerificado || false,
+            estimacionesRealizadas: this.progreso.estimacionesRealizadas || 0,
             funcionesProbadasTorre: this.progreso.funcionesProbadasTorre || 0,
       progresoGeneral: this.escenariosHabilitados.length > 0 
         ? (this.progreso.escenariosCompletados.length / this.escenariosHabilitados.length) * 100 

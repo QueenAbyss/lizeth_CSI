@@ -84,21 +84,26 @@ export class Logro {
         return cambiosLimitesPuente >= (this.criterios.cambiosLimites || 3)
       case 'cazador_c':
         // Verificar que se encontró el punto c del teorema del valor medio
+        console.log(`🎯 Verificando Cazador de C: puntoCEncontrado=${progreso.puntoCEncontrado}`)
         return progreso.puntoCEncontrado === true
       case 'estimador_preciso':
         // Verificar precisión de estimación del punto c
         const precisionEstimacionRequerida = this.criterios.precisionEstimacion || 95
-        return progreso.precisionEstimacion >= precisionEstimacionRequerida
-      case 'calculador_pendiente':
-        // Verificar que se calculó correctamente la pendiente
-        return progreso.pendienteCalculada === true
-      case 'verificador_teorema':
-        // Verificar que se verificó el teorema del valor medio
-        return progreso.teoremaVerificado === true
+        const precisionActual = progreso.precisionEstimacion || 0
+        console.log(`🎯 Verificando Estimador Preciso: precisión actual=${precisionActual}, requerida=${precisionEstimacionRequerida}`)
+        return precisionActual >= precisionEstimacionRequerida
+      case 'maestro_estimacion':
+        // Verificar estimaciones realizadas en el teorema del valor medio
+        const estimacionesRealizadas = progreso.estimacionesRealizadas || 0
+        const estimacionesRequeridas = this.criterios.estimacionesRealizadas || 3
+        console.log(`🎯 Verificando Maestro de Estimación: estimaciones actuales=${estimacionesRealizadas}, requeridas=${estimacionesRequeridas}`)
+        return estimacionesRealizadas >= estimacionesRequeridas
       case 'explorador_funciones':
         // Verificar funciones probadas en el teorema del valor medio
         const funcionesProbadasTorre = progreso.funcionesProbadasTorre || 0
-        return funcionesProbadasTorre >= (this.criterios.funcionesProbadas || 3)
+        const funcionesRequeridas = this.criterios.funcionesProbadas || 3
+        console.log(`🎯 Verificando Explorador de Funciones: funciones actuales=${funcionesProbadasTorre}, requeridas=${funcionesRequeridas}`)
+        return funcionesProbadasTorre >= funcionesRequeridas
       default:
         return false
     }

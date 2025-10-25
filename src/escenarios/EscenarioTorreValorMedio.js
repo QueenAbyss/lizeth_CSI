@@ -166,6 +166,30 @@ export class EscenarioTorreValorMedio extends Escenario {
         try {
             this.estadoTorre.establecerEstimacionUsuario(c)
             this.renderizarCompleto()
+            
+            // Desbloquear logro "Cazador de C" cuando el usuario hace su estimación
+            try {
+                const usuarioActual = this.gestorLogros.servicioAuth.obtenerUsuarioActual()
+                if (usuarioActual && usuarioActual.esEstudiante()) {
+                    // Marcar que el usuario encontró/estimó el punto c
+                    usuarioActual.progreso.puntoCEncontrado = true
+                    
+                    // Rastrear estimaciones realizadas
+                    if (!usuarioActual.progreso.estimacionesRealizadas) {
+                        usuarioActual.progreso.estimacionesRealizadas = 0
+                    }
+                    usuarioActual.progreso.estimacionesRealizadas++
+                    
+                    console.log('🎯 Usuario estimó punto c. Progreso actualizado:', {
+                        puntoCEncontrado: usuarioActual.progreso.puntoCEncontrado,
+                        estimacionesRealizadas: usuarioActual.progreso.estimacionesRealizadas
+                    })
+                    // NO LLAMAR A verificarLogrosEstudiante AQUÍ. Se hará a través del hook.
+                }
+            } catch (error) {
+                console.error('Error verificando logro al estimar c:', error)
+            }
+            
             return this
         } catch (error) {
             console.error('Error estableciendo estimación:', error)
@@ -190,6 +214,13 @@ export class EscenarioTorreValorMedio extends Escenario {
         try {
             const verificacionExitosa = this.estadoTorre.verificarEstimacion()
             this.renderizarCompleto()
+            
+            // Verificar logros cuando se encuentra el punto c
+            if (verificacionExitosa) {
+                console.log('🎯 Punto c encontrado, verificando logros...')
+                this.verificarLogros()
+            }
+            
             return verificacionExitosa
         } catch (error) {
             console.error('Error verificando estimación:', error)
@@ -327,7 +358,7 @@ export class EscenarioTorreValorMedio extends Escenario {
                 const todosLosLogros = this.gestorLogros.obtenerLogrosDisponibles()
                 const logrosTorre = todosLosLogros.filter(logro => {
                     // Solo incluir logros específicos del Teorema del Valor Medio
-                    if (logro.criterios && logro.criterios.escenario === 'torreValorMedio') {
+                    if (logro.criterios && logro.criterios.escenario === 'torre-valor-medio') {
                         // Si tiene teorema especificado, solo incluir los del valor-medio
                         if (logro.criterios.teorema) {
                             return logro.criterios.teorema === 'valor-medio'
@@ -339,7 +370,7 @@ export class EscenarioTorreValorMedio extends Escenario {
                     if (logro.criterios && logro.criterios.escenariosCompletados) {
                         const escenariosRequeridos = logro.criterios.escenariosCompletados
                         // Solo incluir si requiere únicamente la torreValorMedio
-                        return escenariosRequeridos.length === 1 && escenariosRequeridos.includes('torreValorMedio')
+                        return escenariosRequeridos.length === 1 && escenariosRequeridos.includes('torre-valor-medio')
                     }
                     return false
                 }).slice(0, 5) // Limitar a máximo 5 logros
@@ -364,21 +395,83 @@ export class EscenarioTorreValorMedio extends Escenario {
 
     // ✅ VERIFICAR LOGROS
     verificarLogros() {
-        const datos = {
-            estimacionUsuario: this.estadoTorre.obtenerEstimacionUsuario(),
-            errorEstimacion: this.estadoTorre.obtenerErrorEstimacion(),
-            estimacionesExcelentes: this.estadoTorre.obtenerMetricas().estimacionesExcelentes,
-            ejemplosCompletados: this.estadoTorre.obtenerEjemplosCompletados?.() || 0,
-            tiempoCompletado: this.estadoTorre.obtenerTiempoTranscurrido()
-        }
-        
         try {
-          const usuarioActual = this.gestorLogros.servicioAuth.obtenerUsuarioActual()
-          if (usuarioActual && usuarioActual.esEstudiante()) {
-            return this.gestorLogros.verificarLogrosEstudiante(usuarioActual.id)
-          }
+            const usuarioActual = this.gestorLogros.servicioAuth.obtenerUsuarioActual()
+            if (usuarioActual && usuarioActual.esEstudiante()) {
+                // Actualizar progreso específico del Teorema del Valor Medio
+                const estimacionUsuario = this.estadoTorre.obtenerEstimacionUsuario()
+                const errorEstimacion = this.estadoTorre.obtenerErrorEstimacion()
+                const puntoCReal = this.estadoTorre.obtenerPuntoCReal()
+                
+                // Calcular precisión manualmente
+                let precisionEstimacion = 0
+                if (puntoCReal !== null && estimacionUsuario !== null && puntoCReal !== 0) {
+                    const errorRelativo = Math.abs(errorEstimacion) / Math.abs(puntoCReal) * 100
+                    precisionEstimacion = Math.max(0, 100 - errorRelativo)
+                } else if (puntoCReal === 0) {
+                    // Si el punto c real es 0, la precisión se basa en qué tan cerca está de 0
+                    precisionEstimacion = Math.max(0, 100 - Math.abs(errorEstimacion) * 100)
+                }
+                
+                // Actualizar métricas específicas del Teorema del Valor Medio
+                if (estimacionUsuario !== null) {
+                    console.log('📊 Actualizando progreso del usuario...')
+                    console.log('- estimacionUsuario:', estimacionUsuario)
+                    console.log('- puntoCReal:', puntoCReal)
+                    console.log('- precisionEstimacion calculada:', precisionEstimacion)
+                    
+                    usuarioActual.progreso.puntoCEncontrado = true
+                    usuarioActual.progreso.precisionEstimacion = Math.max(usuarioActual.progreso.precisionEstimacion || 0, precisionEstimacion)
+                    
+                    console.log('- puntoCEncontrado establecido a:', usuarioActual.progreso.puntoCEncontrado)
+                    console.log('- precisionEstimacion establecida a:', usuarioActual.progreso.precisionEstimacion)
+                    
+                    // Rastrear estimaciones realizadas
+                    if (!usuarioActual.progreso.estimacionesRealizadas) {
+                        usuarioActual.progreso.estimacionesRealizadas = 0
+                    }
+                    usuarioActual.progreso.estimacionesRealizadas++
+                    
+                    // Rastrear funciones probadas
+                    if (!usuarioActual.progreso.funcionesProbadasTorreLista) {
+                        usuarioActual.progreso.funcionesProbadasTorreLista = []
+                    }
+                    const funcionActual = this.estadoTorre.obtenerFuncionActual?.() || 'x²'
+                    if (!usuarioActual.progreso.funcionesProbadasTorreLista.includes(funcionActual)) {
+                        usuarioActual.progreso.funcionesProbadasTorreLista.push(funcionActual)
+                    }
+                    usuarioActual.progreso.funcionesProbadasTorre = usuarioActual.progreso.funcionesProbadasTorreLista.length
+                    
+                    console.log('📊 Progreso Torre del Valor Medio actualizado:', {
+                        puntoCEncontrado: usuarioActual.progreso.puntoCEncontrado,
+                        precisionEstimacion: usuarioActual.progreso.precisionEstimacion,
+                        estimacionesRealizadas: usuarioActual.progreso.estimacionesRealizadas,
+                        funcionesProbadasTorre: usuarioActual.progreso.funcionesProbadasTorre,
+                        estimacionUsuario: estimacionUsuario,
+                        errorEstimacion: errorEstimacion,
+                        puntoCReal: puntoCReal,
+                        precisionCalculada: precisionEstimacion
+                    })
+                }
+                
+                // Verificar logros específicos del Teorema del Valor Medio
+                const logrosDesbloqueados = this.gestorLogros.verificarLogrosEstudiante(usuarioActual.id, 'torre-valor-medio')
+                if (logrosDesbloqueados.length > 0) {
+                    console.log('🏆 Logros desbloqueados en Torre del Valor Medio:', logrosDesbloqueados)
+                    logrosDesbloqueados.forEach(logro => {
+                        console.log('🔄 Llamando callback para logro:', logro.nombre, 'ID:', logro.id)
+                        if (this.onLogroDesbloqueado && typeof this.onLogroDesbloqueado === 'function') {
+                            this.onLogroDesbloqueado(logro)
+                        } else {
+                            console.log('⚠️ Callback onLogroDesbloqueado no está configurado')
+                        }
+                    })
+                }
+                
+                return logrosDesbloqueados
+            }
         } catch (error) {
-          console.error('Error verificando logros:', error)
+            console.error('Error verificando logros:', error)
         }
         return []
     }
@@ -424,7 +517,7 @@ export class EscenarioTorreValorMedio extends Escenario {
             return null
         }
         
-        const teoria = this.gestorTeoria.obtenerTeoria('torreValorMedio')
+        const teoria = this.gestorTeoria.obtenerTeoria('torre-valor-medio')
         console.log('- Teoría obtenida:', teoria)
         
         if (!teoria) {

@@ -97,6 +97,21 @@ export const useTorreValorMedio = (): TorreValorMedioState => {
       // Inicializar el escenario
       escenarioRef.current.inicializar()
       
+      // Configurar callback para logros desbloqueados
+      escenarioRef.current.onLogroDesbloqueado = (logro: any) => {
+        console.log('🏆 Logro desbloqueado en hook:', logro.nombre, 'ID:', logro.id)
+        setLogrosDesbloqueados(prev => {
+          console.log('🔄 Estado anterior de logros desbloqueados:', prev)
+          if (!prev.includes(logro.id)) {
+            const nuevoEstado = [...prev, logro.id]
+            console.log('🔄 Nuevo estado de logros desbloqueados:', nuevoEstado)
+            return nuevoEstado
+          }
+          console.log('🔄 Logro ya estaba desbloqueado, no se actualiza')
+          return prev
+        })
+      }
+      
       console.log('🏰 Escenario Torre del Valor Medio inicializado:', escenarioRef.current)
       
       setEscenario(escenarioRef.current)
@@ -155,6 +170,11 @@ export const useTorreValorMedio = (): TorreValorMedioState => {
         setEstaBloqueado(true)
         setNumeroIntentos(prev => prev + 1)
         console.log(`🎯 Estimación del usuario: ${c}`)
+        
+        // Verificar logros después de establecer la estimación
+        setTimeout(() => {
+          verificarLogros()
+        }, 100)
       } catch (error) {
         console.error('Error estableciendo estimación:', error)
       }
@@ -192,6 +212,12 @@ export const useTorreValorMedio = (): TorreValorMedioState => {
         }
         
         console.log(`✅ Verificación: ${exitosa ? 'Exitosa' : 'Fallida'}`)
+        
+        // Verificar logros después de verificar la estimación
+        setTimeout(() => {
+          verificarLogros()
+        }, 100)
+        
         return exitosa
       } catch (error) {
         console.error('Error verificando estimación:', error)
@@ -331,19 +357,6 @@ export const useTorreValorMedio = (): TorreValorMedioState => {
     return null
   }, [])
   
-  // ✅ OBTENER INFORMACIÓN DEL TEOREMA
-  const obtenerInformacionTeorema = useCallback(() => {
-    if (escenarioRef.current) {
-      try {
-        return escenarioRef.current.obtenerInformacionTeorema()
-      } catch (error) {
-        console.error('Error obteniendo información del teorema:', error)
-        return null
-      }
-    }
-    return null
-  }, [])
-
   // ✅ VERIFICAR LOGROS
   const verificarLogros = useCallback(() => {
     if (escenarioRef.current) {
@@ -363,6 +376,19 @@ export const useTorreValorMedio = (): TorreValorMedioState => {
       }
     }
     return []
+  }, [])
+
+  // ✅ OBTENER INFORMACIÓN DEL TEOREMA
+  const obtenerInformacionTeorema = useCallback(() => {
+    if (escenarioRef.current) {
+      try {
+        return escenarioRef.current.obtenerInformacionTeorema()
+      } catch (error) {
+        console.error('Error obteniendo información del teorema:', error)
+        return null
+      }
+    }
+    return null
   }, [])
   
   // ✅ VERIFICAR CONDICIONES DEL TEOREMA

@@ -230,7 +230,7 @@ export class GestorLogros {
         descripcion: 'Encuentra el punto c del teorema del valor medio',
         tipo: 'especial',
         criterios: { 
-          escenario: 'torreValorMedio',
+          escenario: 'torre-valor-medio',
           teorema: 'valor-medio',
           puntoCEncontrado: true
         },
@@ -245,7 +245,7 @@ export class GestorLogros {
         descripcion: 'Haz una estimación del punto c con error menor al 5%',
         tipo: 'especial',
         criterios: { 
-          escenario: 'torreValorMedio',
+          escenario: 'torre-valor-medio',
           teorema: 'valor-medio',
           precisionEstimacion: 95
         },
@@ -255,34 +255,20 @@ export class GestorLogros {
       }),
 
       new Logro({
-        id: 'calculador_pendiente',
-        nombre: 'Calculador de Pendientes',
-        descripcion: 'Calcula correctamente la pendiente de la recta secante',
+        id: 'maestro_estimacion',
+        nombre: 'Maestro de Estimación',
+        descripcion: 'Haz al menos 3 estimaciones del punto c',
         tipo: 'especial',
         criterios: { 
-          escenario: 'torreValorMedio',
+          escenario: 'torre-valor-medio',
           teorema: 'valor-medio',
-          pendienteCalculada: true
+          estimacionesRealizadas: 3
         },
-        icono: '📐',
+        icono: '🎯',
         puntos: 12,
         raridad: 'comun'
       }),
 
-      new Logro({
-        id: 'verificador_teorema',
-        nombre: 'Verificador del Teorema',
-        descripcion: 'Verifica que f\'(c) = (f(b) - f(a))/(b - a)',
-        tipo: 'especial',
-        criterios: { 
-          escenario: 'torreValorMedio',
-          teorema: 'valor-medio',
-          teoremaVerificado: true
-        },
-        icono: '✅',
-        puntos: 25,
-        raridad: 'raro'
-      }),
 
       new Logro({
         id: 'explorador_funciones',
@@ -290,7 +276,7 @@ export class GestorLogros {
         descripcion: 'Prueba el teorema con al menos 3 funciones diferentes',
         tipo: 'especial',
         criterios: { 
-          escenario: 'torreValorMedio',
+          escenario: 'torre-valor-medio',
           teorema: 'valor-medio',
           funcionesProbadas: 3
         },
@@ -400,10 +386,14 @@ export class GestorLogros {
           // Normalizar nombres de escenarios para comparación
           const escenarioNormalizado = escenarioActual.replace('-', '').toLowerCase()
           
+          console.log(`🔍 Verificando logro ${logro.id}: escenarioActual=${escenarioActual}, escenarioNormalizado=${escenarioNormalizado}`)
+          
           // Para logros con escenario específico
           if (logro.criterios.escenario) {
             const logroEscenarioNormalizado = logro.criterios.escenario.replace('-', '').toLowerCase()
+            console.log(`🔍 Logro ${logro.id}: logroEscenario=${logro.criterios.escenario}, logroEscenarioNormalizado=${logroEscenarioNormalizado}`)
             if (logroEscenarioNormalizado !== escenarioNormalizado) {
+              console.log(`⏭️ Saltando logro ${logro.id} - escenario no coincide`)
               continue // Saltar logros de otros escenarios
             }
           }
@@ -417,10 +407,19 @@ export class GestorLogros {
           }
         }
         
+        console.log(`🔍 Verificando criterios para logro ${logro.id}: ${logro.nombre}`)
+        if (logro.id === 'cazador_c') {
+          console.log(`🎯 LOGRO ESPECIAL: Verificando Cazador de C`)
+          console.log(`🎯 - progreso.puntoCEncontrado: ${progreso.puntoCEncontrado}`)
+          console.log(`🎯 - logro.criterios:`, logro.criterios)
+        }
         if (logro.verificarCriterios(progreso)) {
+          console.log(`✅ Logro ${logro.id} desbloqueado!`)
           logrosDesbloqueados.push(logro)
           // Agregar logro al estudiante
           estudiante.agregarLogro(logro.id)
+        } else {
+          console.log(`❌ Logro ${logro.id} no cumple criterios`)
         }
       }
     }
