@@ -326,9 +326,14 @@ export class EscenarioTorreValorMedio extends Escenario {
                 // Obtener solo los logros específicos de la Torre del Valor Medio
                 const todosLosLogros = this.gestorLogros.obtenerLogrosDisponibles()
                 const logrosTorre = todosLosLogros.filter(logro => {
-                    // Solo incluir logros específicos de la Torre del Valor Medio
-                    if (logro.criterios && logro.criterios.escenario) {
-                        return logro.criterios.escenario === 'torreValorMedio'
+                    // Solo incluir logros específicos del Teorema del Valor Medio
+                    if (logro.criterios && logro.criterios.escenario === 'torreValorMedio') {
+                        // Si tiene teorema especificado, solo incluir los del valor-medio
+                        if (logro.criterios.teorema) {
+                            return logro.criterios.teorema === 'valor-medio'
+                        }
+                        // Si no tiene teorema especificado, incluir (logros generales de completitud)
+                        return true
                     }
                     // Incluir logros de completitud que requieren SOLO la Torre del Valor Medio
                     if (logro.criterios && logro.criterios.escenariosCompletados) {
