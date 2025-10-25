@@ -78,6 +78,20 @@ export class EscenarioJardinRiemann extends Escenario {
   actualizarLimites(limiteIzquierdo, limiteDerecho) {
     if (this.estado) {
       this.estado.actualizarLimites(limiteIzquierdo, limiteDerecho)
+      
+      // Rastrear cambios de límites
+      try {
+        const usuarioActual = this.gestorLogros.servicioAuth.obtenerUsuarioActual()
+        if (usuarioActual && usuarioActual.esEstudiante()) {
+          if (!usuarioActual.progreso.cambiosLimites) {
+            usuarioActual.progreso.cambiosLimites = 0
+          }
+          usuarioActual.progreso.cambiosLimites++
+        }
+      } catch (error) {
+        console.error('Error rastreando cambios de límites:', error)
+      }
+      
       this.calcularYActualizar()
       this.onEstadoCambiado()
     }
@@ -150,10 +164,40 @@ export class EscenarioJardinRiemann extends Escenario {
     this.gestorMetricas.registrarIntento()
     this.gestorMetricas.calcularPrecision(aprox, exacta)
 
-    // Verificar logros - obtener usuario actual y verificar logros
+    // Actualizar progreso específico del Jardín de Riemann
     try {
       const usuarioActual = this.gestorLogros.servicioAuth.obtenerUsuarioActual()
       if (usuarioActual && usuarioActual.esEstudiante()) {
+        // Inicializar propiedades específicas del Jardín de Riemann
+        if (!usuarioActual.progreso.precisionJardin) usuarioActual.progreso.precisionJardin = 0
+        if (!usuarioActual.progreso.macetasUsadas) usuarioActual.progreso.macetasUsadas = 0
+        if (!usuarioActual.progreso.cambiosLimites) usuarioActual.progreso.cambiosLimites = 0
+        if (!usuarioActual.progreso.funcionesProbadas) usuarioActual.progreso.funcionesProbadas = 0
+        if (!usuarioActual.progreso.hechizosUsados) usuarioActual.progreso.hechizosUsados = 0
+        
+        // Actualizar métricas del Jardín de Riemann
+        usuarioActual.progreso.precisionJardin = Math.max(usuarioActual.progreso.precisionJardin, prec)
+        usuarioActual.progreso.macetasUsadas = Math.max(usuarioActual.progreso.macetasUsadas, this.estado.numeroMacetas)
+        
+        // Rastrear funciones probadas (basado en la función actual)
+        if (!usuarioActual.progreso.funcionesProbadasLista) {
+          usuarioActual.progreso.funcionesProbadasLista = []
+        }
+        if (!usuarioActual.progreso.funcionesProbadasLista.includes(this.funcionActual)) {
+          usuarioActual.progreso.funcionesProbadasLista.push(this.funcionActual)
+        }
+        usuarioActual.progreso.funcionesProbadas = usuarioActual.progreso.funcionesProbadasLista.length
+        
+        // Rastrear hechizos usados (basado en el tipo de hechizo actual)
+        if (!usuarioActual.progreso.hechizosUsadosLista) {
+          usuarioActual.progreso.hechizosUsadosLista = []
+        }
+        if (!usuarioActual.progreso.hechizosUsadosLista.includes(this.estado.tipoHechizo)) {
+          usuarioActual.progreso.hechizosUsadosLista.push(this.estado.tipoHechizo)
+        }
+        usuarioActual.progreso.hechizosUsados = usuarioActual.progreso.hechizosUsadosLista.length
+        
+        // Verificar logros
         const logrosDesbloqueados = this.gestorLogros.verificarLogrosEstudiante(usuarioActual.id, 'jardin-riemann')
         if (logrosDesbloqueados.length > 0) {
           console.log('Logros desbloqueados:', logrosDesbloqueados)
@@ -193,36 +237,23 @@ export class EscenarioJardinRiemann extends Escenario {
         const todosLosLogros = this.gestorLogros.obtenerLogrosDisponibles()
         const escenarioNormalizado = 'jardinriemann' // Normalizado para comparación
         
+        // Solo mostrar logros específicos del Jardín de Riemann (máximo 5)
         const logrosJardin = todosLosLogros.filter(logro => {
-          // Incluir logros específicos del Jardín de Riemann
+          // Solo incluir logros específicos del Jardín de Riemann
           if (logro.criterios && logro.criterios.escenario) {
             const logroEscenarioNormalizado = logro.criterios.escenario.replace('-', '').toLowerCase()
-            if (logroEscenarioNormalizado === escenarioNormalizado) {
-              return true
-            }
+            return logroEscenarioNormalizado === escenarioNormalizado
           }
-          
-          // Excluir logros de completitud que requieren otros escenarios
-          if (logro.criterios && logro.criterios.escenariosCompletados) {
-            const escenariosRequeridos = logro.criterios.escenariosCompletados.map(e => e.replace('-', '').toLowerCase())
-            // Si requiere completar otros escenarios (no el Jardín de Riemann), excluirlo
-            if (escenariosRequeridos.length === 1 && escenariosRequeridos[0] !== escenarioNormalizado) {
-              return false
-            }
-            // Si requiere completar múltiples escenarios y no incluye el Jardín de Riemann, excluirlo
-            if (escenariosRequeridos.length > 1 && !escenariosRequeridos.includes(escenarioNormalizado)) {
-              return false
-            }
-          }
-          
-          // Incluir logros generales que no tengan escenario específico
-          if (!logro.criterios || (!logro.criterios.escenario && !logro.criterios.escenariosCompletados)) {
-            return true
-          }
-          
           return false
-        })
-        return logrosJardin
+        }).slice(0, 5) // Limitar a máximo 5 logros
+        
+        // Agregar estado de desbloqueo a cada logro
+        const logrosConEstado = logrosJardin.map(logro => ({
+          ...logro,
+          desbloqueado: usuarioActual.progreso.logros.includes(logro.id)
+        }))
+        
+        return logrosConEstado
       }
     } catch (error) {
       console.error('Error obteniendo logros:', error)

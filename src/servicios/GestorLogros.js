@@ -61,15 +61,15 @@ export class GestorLogros {
 
       // Logros específicos del Jardín de Riemann
       new Logro({
-        id: 'jardin_explorador',
-        nombre: 'Explorador del Jardín',
-        descripcion: 'Explora las propiedades de las integrales en el Jardín de Riemann',
+        id: 'jardin_limites',
+        nombre: 'Manipulador de Límites',
+        descripcion: 'Cambia los límites de integración en el Jardín de Riemann',
         tipo: 'especial',
         criterios: { 
           escenario: 'jardin-riemann',
-          actividadesMinimas: 3
+          cambiosLimites: 3
         },
-        icono: '🌿',
+        icono: '📏',
         puntos: 15,
         raridad: 'comun'
       }),
@@ -77,11 +77,11 @@ export class GestorLogros {
       new Logro({
         id: 'jardin_precision',
         nombre: 'Precisión del Jardín',
-        descripcion: 'Alcanza una precisión del 95% en el Jardín de Riemann',
+        descripcion: 'Alcanza una precisión del 80% en el Jardín de Riemann',
         tipo: 'especial',
         criterios: { 
           escenario: 'jardin-riemann',
-          precisionMinima: 95
+          precisionMinima: 80
         },
         icono: '🎯',
         puntos: 20,
@@ -91,15 +91,43 @@ export class GestorLogros {
       new Logro({
         id: 'jardin_macetas',
         nombre: 'Maestro de Macetas',
-        descripcion: 'Usa más de 10 macetas en el Jardín de Riemann',
+        descripcion: 'Usa más de 5 macetas en el Jardín de Riemann',
         tipo: 'especial',
         criterios: { 
           escenario: 'jardin-riemann',
-          macetasMinimas: 10
+          macetasMinimas: 5
         },
         icono: '🪴',
         puntos: 18,
         raridad: 'raro'
+      }),
+
+      new Logro({
+        id: 'jardin_funciones',
+        nombre: 'Explorador de Funciones',
+        descripcion: 'Prueba diferentes funciones en el Jardín de Riemann',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'jardin-riemann',
+          funcionesProbadas: 3
+        },
+        icono: '📈',
+        puntos: 16,
+        raridad: 'comun'
+      }),
+
+      new Logro({
+        id: 'jardin_hechizos',
+        nombre: 'Maestro de Hechizos',
+        descripcion: 'Usa diferentes tipos de hechizos en el Jardín de Riemann',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'jardin-riemann',
+          hechizosUsados: 2
+        },
+        icono: '✨',
+        puntos: 17,
+        raridad: 'comun'
       }),
 
       new Logro({

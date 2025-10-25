@@ -58,6 +58,26 @@ export class Logro {
         return progreso.historialActividad.length >= 10
       case 'persistente':
         return progreso.tiempoTotal >= 3600000 // 1 hora
+      case 'jardin_limites':
+        // Verificar cambios de límites en el Jardín de Riemann
+        const cambiosLimites = progreso.cambiosLimites || 0
+        return cambiosLimites >= (this.criterios.cambiosLimites || 3)
+      case 'jardin_funciones':
+        // Verificar funciones probadas en el Jardín de Riemann
+        const funcionesProbadas = progreso.funcionesProbadas || 0
+        return funcionesProbadas >= (this.criterios.funcionesProbadas || 3)
+      case 'jardin_hechizos':
+        // Verificar hechizos usados en el Jardín de Riemann
+        const hechizosUsados = progreso.hechizosUsados || 0
+        return hechizosUsados >= (this.criterios.hechizosUsados || 2)
+      case 'jardin_precision':
+        // Verificar precisión en el Jardín de Riemann
+        const precisionRequerida = this.criterios.precisionMinima || 95
+        return progreso.precisionJardin >= precisionRequerida
+      case 'jardin_macetas':
+        // Verificar uso de macetas en el Jardín de Riemann
+        const macetasRequeridas = this.criterios.macetasMinimas || 10
+        return progreso.macetasUsadas >= macetasRequeridas
       default:
         return false
     }
