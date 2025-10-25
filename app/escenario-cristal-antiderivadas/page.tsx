@@ -33,211 +33,9 @@ import { Antiderivada } from '@/src/entidades/Antiderivada.js'
 // Importar los nuevos componentes
 import IndefiniteIntegralsVisualization from '@/components/IndefiniteIntegralsVisualization'
 import IndefiniteIntegralsExamples from '@/components/IndefiniteIntegralsExamples'
+import VariableChangeVisualization from '@/components/VariableChangeVisualization'
+import VariableChangeExamples from '@/components/VariableChangeExamples'
 
-// Componente de visualización de Cambio de Variable
-const VariableChangeVisualization = ({
-  tipoTransformacion,
-  valorTransformacion,
-  mostrarTransformacion,
-  mostrarParticulas,
-  setValorTransformacion,
-  setMostrarTransformacion,
-  setMostrarParticulas,
-  transformaciones,
-  logrosDesbloqueados,
-  tiempoSesion
-}: any) => {
-  return (
-    <div className="flex gap-6">
-      {/* Panel Principal de Visualización */}
-      <div className="flex-1 bg-white rounded-lg p-6 shadow-lg">
-        <div className="mb-4">
-          <select className="bg-purple-100 text-purple-800 px-4 py-2 rounded-lg">
-            <option>¿Qué muestra la gráfica?</option>
-            <option>La función original f(x) y su transformación f(u)</option>
-          </select>
-          </div>
-
-        {/* Gráfico Principal */}
-        <div className="relative bg-gray-50 rounded-lg p-4 h-96">
-          <svg className="w-full h-full" viewBox="0 0 400 300">
-            {/* Ejes */}
-            <line x1="50" y1="150" x2="350" y2="150" stroke="black" strokeWidth="2"/>
-            <line x1="200" y1="50" x2="200" y2="250" stroke="black" strokeWidth="2"/>
-            
-            {/* Función original f(x) = x² */}
-            <path 
-              d="M 50 250 Q 200 50 350 250" 
-              stroke="purple" 
-              strokeWidth="3" 
-              fill="none"
-            />
-            <text x="300" y="40" className="text-sm font-semibold text-purple-600">f(x) = x²</text>
-            
-            {/* Función transformada f(u) */}
-            <path 
-              d="M 50 250 Q 150 50 300 250" 
-              stroke="red" 
-              strokeWidth="3" 
-              strokeDasharray="5,5"
-              fill="none"
-            />
-            <text x="250" y="40" className="text-sm font-semibold text-red-600">f(u) = x²</text>
-            
-            {/* Flecha de transformación */}
-            <path 
-              d="M 200 50 Q 175 30 150 50" 
-              stroke="yellow" 
-              strokeWidth="3" 
-              fill="none"
-            />
-            <text x="160" y="35" className="text-xs font-bold">Transformación</text>
-            
-            {/* Información de transformación */}
-            <text x="50" y="30" className="text-sm font-semibold">f(x) = x²</text>
-            <text x="50" y="45" className="text-sm">Transformación: u = x + 1</text>
-            <text x="50" y="60" className="text-sm">Valor: {valorTransformacion}</text>
-          </svg>
-        </div>
-
-        {/* Información de la transformación actual */}
-        <div className="mt-4 bg-purple-50 p-4 rounded-lg">
-          <h3 className="font-semibold text-purple-800 flex items-center gap-2">
-            <Wand2Icon className="w-5 h-5" />
-            {transformaciones[tipoTransformacion as keyof typeof transformaciones]?.name}
-          </h3>
-          <p className="text-sm text-purple-700 mt-1">
-            Transformación lineal simple
-          </p>
-          <p className="text-sm font-mono text-purple-600">
-            Transformación: u = x + {valorTransformacion}
-          </p>
-        </div>
-      </div>
-
-      {/* Panel de Control Derecho */}
-      <div className="w-80 space-y-6">
-        {/* Transformaciones Mágicas */}
-          <Card>
-            <CardHeader>
-            <CardTitle className="text-lg font-semibold text-purple-800 mb-3 flex items-center gap-2">
-              <Wand2Icon className="w-5 h-5" />
-              Transformaciones Mágicas
-            </CardTitle>
-            </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.entries(transformaciones).map(([key, trans]) => (
-                    <Button
-                  key={key}
-                  onClick={() => {/* Lógica de selección */}}
-                  className={`p-3 rounded-lg text-sm font-medium transition-colors ${
-                    tipoTransformacion === key 
-                      ? 'bg-green-500 text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {trans.name}
-                    </Button>
-                  ))}
-                </div>
-          </CardContent>
-        </Card>
-
-        {/* Control Mágico */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-purple-800 mb-3 flex items-center gap-2">
-              <Wand2Icon className="w-5 h-5" />
-              Control Mágico
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button
-              onClick={() => setMostrarTransformacion(!mostrarTransformacion)}
-              className="w-full bg-green-500 text-white py-2 px-4 rounded-lg mb-4"
-            >
-              {mostrarTransformacion ? 'Ocultar' : 'Mostrar'}
-            </Button>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Valor de Transformación</label>
-                <Input
-                type="range"
-                min="-3"
-                max="3"
-                step="0.1"
-                value={valorTransformacion}
-                onChange={(e) => setValorTransformacion(parseFloat(e.target.value))}
-                className="w-full"
-              />
-              <div className="text-center text-sm text-gray-600">
-                Valor = {valorTransformacion.toFixed(1)}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Efectos Mágicos */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-purple-800 mb-3 flex items-center gap-2">
-              <Wand2Icon className="w-5 h-5" />
-              Efectos Mágicos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Button
-                onClick={() => setMostrarParticulas(!mostrarParticulas)}
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg"
-              >
-                {mostrarParticulas ? 'Ocultar Partículas' : 'Mostrar Partículas'}
-              </Button>
-              <Button className="w-full bg-purple-500 text-white py-2 px-4 rounded-lg">
-                Mostrar Partículas
-              </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-        {/* Logros y Cronómetro */}
-          <Card>
-            <CardHeader>
-            <CardTitle className="text-lg font-semibold text-purple-800 mb-3 flex items-center gap-2">
-              <TrophyIcon className="w-5 h-5" />
-              Logros
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-            <div className="text-sm text-gray-600">
-              <div className="flex items-center justify-between">
-                <span>Logros desbloqueados</span>
-                <span className="text-purple-600">▼</span>
-                </div>
-                </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-purple-800 mb-3 flex items-center gap-2">
-              <ClockIcon className="w-5 h-5" />
-              Cronómetro
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center">
-              <div className="text-2xl font-mono">{new Date(tiempoSesion * 1000).toISOString().substring(11, 19)}</div>
-              <div className="text-sm text-gray-600">Tiempo total</div>
-              <div className="text-xs text-gray-500">Detenido</div>
-              </div>
-            </CardContent>
-          </Card>
-      </div>
-    </div>
-  )
-}
 
 export default function EscenarioCristalAntiderivadas() {
   const router = useRouter()
@@ -254,12 +52,6 @@ export default function EscenarioCristalAntiderivadas() {
   const [mostrarFamilia, setMostrarFamilia] = useState(true)
   const [animacionActiva, setAnimacionActiva] = useState(false)
 
-  // Estados para Cambio de Variable
-  const [tipoTransformacion, setTipoTransformacion] = useState('linear')
-  const [valorTransformacion, setValorTransformacion] = useState(1)
-  const [mostrarTransformacion, setMostrarTransformacion] = useState(true)
-  const [mostrarParticulas, setMostrarParticulas] = useState(false)
-
   // Estados de tiempo y logros (simulados por ahora)
   const [tiempoSesion, setTiempoSesion] = useState(0)
   const [logrosDesbloqueados, setLogrosDesbloqueados] = useState<string[]>([])
@@ -271,14 +63,6 @@ export default function EscenarioCristalAntiderivadas() {
     linear: { f: 'x', F: 'x²/2 + C', color: 'blue', nombre: 'Hada Lineal' },
     exponential: { f: 'eˣ', F: 'eˣ + C', color: 'green', nombre: 'Hada Exponencial' },
     sine: { f: 'sin(x)', F: '-cos(x) + C', color: 'purple', nombre: 'Hada Ondulante' }
-  }
-
-  // Transformaciones disponibles para Cambio de Variable
-  const transformaciones = {
-    linear: { name: 'Hada Lineal', formula: 'u = x + C' },
-    quadratic: { name: 'Hada Cuadrática', formula: 'u = x² + C' },
-    exponential: { name: 'Hada Exponencial', formula: 'u = eˣ + C' },
-    sine: { name: 'Hada Ondulante', formula: 'u = sin(x) + C' }
   }
 
   // Simulación de cronómetro
@@ -295,11 +79,8 @@ export default function EscenarioCristalAntiderivadas() {
     if (temaActivo === 'integrales_indefinidas' && funcionSeleccionada !== 'quadratic' && !logrosDesbloqueados.includes('primera_exploracion_indefinidas')) {
       setLogrosDesbloqueados(prev => [...prev, 'primera_exploracion_indefinidas'])
     }
-    if (temaActivo === 'cambio_variable' && tipoTransformacion !== 'linear' && !logrosDesbloqueados.includes('primera_transformacion_variable')) {
-      setLogrosDesbloqueados(prev => [...prev, 'primera_transformacion_variable'])
-    }
     setProgresoLogros({ total: 9, desbloqueados: logrosDesbloqueados.length })
-  }, [temaActivo, funcionSeleccionada, tipoTransformacion, logrosDesbloqueados])
+  }, [temaActivo, funcionSeleccionada, logrosDesbloqueados])
 
   // Función para obtener consejos contextuales
   const getCurrentTip = (topic: string, section: string) => {
@@ -345,10 +126,10 @@ export default function EscenarioCristalAntiderivadas() {
             >
               <Wand2Icon className="w-4 h-4" />
               Cambio de Variable
-            </Button>
+              </Button>
+          </div>
           </div>
         </div>
-      </div>
 
       {/* Contenido Principal */}
       <div className="max-w-6xl mx-auto px-6 py-8">
@@ -377,7 +158,7 @@ export default function EscenarioCristalAntiderivadas() {
               <EyeIcon className="w-4 h-4" />
               Visualización
             </Button>
-            <Button
+                    <Button
               onClick={() => setSeccionActiva('ejemplos')}
               className={`px-6 py-2 rounded-full flex items-center gap-2 transition-colors ${
                 seccionActiva === 'ejemplos'
@@ -387,15 +168,15 @@ export default function EscenarioCristalAntiderivadas() {
             >
               <LightbulbIcon className="w-4 h-4" />
               Ejemplos
-            </Button>
-          </div>
-        </div>
+                    </Button>
+                </div>
+              </div>
 
         {/* Renderizado del Contenido */}
         {temaActivo === 'integrales_indefinidas' && (
           <>
             {seccionActiva === 'teoria' && (
-              <Card>
+          <Card>
             <CardHeader>
                   <CardTitle className="text-3xl font-bold text-purple-800 flex items-center justify-center gap-3">
                     <StarIcon className="w-8 h-8" />
@@ -475,86 +256,18 @@ export default function EscenarioCristalAntiderivadas() {
                       </ol>
                   </div>
                   </div>
-                </CardContent>
-              </Card>
+            </CardContent>
+          </Card>
             )}
             {seccionActiva === 'visualizacion' && (
-              <VariableChangeVisualization
-                tipoTransformacion={tipoTransformacion}
-                valorTransformacion={valorTransformacion}
-                mostrarTransformacion={mostrarTransformacion}
-                mostrarParticulas={mostrarParticulas}
-                setValorTransformacion={setValorTransformacion}
-                setMostrarTransformacion={setMostrarTransformacion}
-                setMostrarParticulas={setMostrarParticulas}
-                transformaciones={transformaciones}
-                logrosDesbloqueados={logrosDesbloqueados}
-                tiempoSesion={tiempoSesion}
+              <VariableChangeVisualization 
+                width={800}
+                height={600}
+                className="w-full"
               />
             )}
             {seccionActiva === 'ejemplos' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-purple-800">Ejemplos de Cambio de Variable</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {[
-                    {
-                      id: 1,
-                      title: "Cambio de Variable Lineal",
-                      problem: "∫ (2x + 1)³ dx",
-                      steps: [
-                        "Identificar: u = 2x + 1",
-                        "Calcular: du = 2dx, entonces dx = du/2",
-                        "Sustituir: ∫ u³ (du/2) = (1/2)∫ u³ du",
-                        "Integrar: (1/2)(u⁴/4) + C = u⁴/8 + C",
-                        "Reemplazar: (2x + 1)⁴/8 + C"
-                      ],
-                      solution: "(2x + 1)⁴/8 + C"
-                    },
-                    {
-                      id: 2,
-                      title: "Cambio de Variable con Exponencial",
-                      problem: "∫ x e^(x²) dx",
-                      steps: [
-                        "Identificar: u = x²",
-                        "Calcular: du = 2x dx, entonces x dx = du/2",
-                        "Sustituir: ∫ e^u (du/2) = (1/2)∫ e^u du",
-                        "Integrar: (1/2)e^u + C",
-                        "Reemplazar: (1/2)e^(x²) + C"
-                      ],
-                      solution: "(1/2)e^(x²) + C"
-                    }
-                  ].map((example) => (
-                    <div key={example.id} className="bg-white rounded-lg p-6 shadow-lg">
-                      <h3 className="text-xl font-semibold mb-3">{example.title}</h3>
-                      <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                        <div className="text-lg font-mono text-center">
-                          {example.problem}
-                </div>
-              </div>
-
-                      <div className="space-y-3">
-                        <h4 className="font-semibold text-purple-800">Pasos de la Solución:</h4>
-                        {example.steps.map((step, index) => (
-                          <div key={index} className="flex items-start gap-3">
-                            <span className="bg-purple-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
-                              {index + 1}
-                            </span>
-                            <span className="text-gray-700">{step}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="mt-4 bg-green-50 p-4 rounded-lg">
-                        <div className="text-lg font-mono text-center text-green-800">
-                          Solución: {example.solution}
-                        </div>
-                      </div>
-                </div>
-                  ))}
-            </CardContent>
-          </Card>
+              <VariableChangeExamples />
             )}
           </>
         )}

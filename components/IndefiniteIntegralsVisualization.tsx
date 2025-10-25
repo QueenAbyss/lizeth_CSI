@@ -347,11 +347,11 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
 
   // Función para generar puntos de la familia de antiderivadas
   const generateFamilyPoints = (func: any, cValues: number[]) => {
-    const familyPoints = []
+    const familyPoints: Array<{c: number, points: {x: number, y: number}[], index: number}> = []
     const step = 0.1
     
     cValues.forEach((c, index) => {
-      const points = []
+      const points: {x: number, y: number}[] = []
       for (let x = xDomain[0]; x <= xDomain[1]; x += step) {
         const y = func.calculateAntiderivative(x, c)
         if (Math.abs(y) <= yDomain[1]) {
