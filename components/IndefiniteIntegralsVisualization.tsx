@@ -375,27 +375,80 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
-    // Dibujar ejes
-    const xAxis = d3.axisBottom(xScale)
+    // Dibujar cuadrícula de fondo
+    const gridX = d3.axisBottom(xScale)
       .tickSize(-innerHeight)
-      .tickPadding(10)
+      .tickFormat(() => '')
+      .ticks(8)
+
+    const gridY = d3.axisLeft(yScale)
+      .tickSize(-innerWidth)
+      .tickFormat(() => '')
+      .ticks(14)
+
+    g.append('g')
+      .attr('class', 'grid-x')
+      .attr('transform', `translate(0, ${innerHeight})`)
+      .call(gridX)
+      .style('stroke', '#e0e0e0')
+      .style('stroke-width', 1)
+      .style('opacity', 0.7)
+
+    g.append('g')
+      .attr('class', 'grid-y')
+      .call(gridY)
+      .style('stroke', '#e0e0e0')
+      .style('stroke-width', 1)
+      .style('opacity', 0.7)
+
+    // Dibujar líneas de ejes principales
+    // Eje X (horizontal)
+    g.append('line')
+      .attr('class', 'x-axis-line')
+      .attr('x1', 0)
+      .attr('y1', yScale(0))
+      .attr('x2', innerWidth)
+      .attr('y2', yScale(0))
+      .style('stroke', '#000')
+      .style('stroke-width', 3)
+      .style('opacity', 1)
+
+    // Eje Y (vertical)
+    g.append('line')
+      .attr('class', 'y-axis-line')
+      .attr('x1', xScale(0))
+      .attr('y1', 0)
+      .attr('x2', xScale(0))
+      .attr('y2', innerHeight)
+      .style('stroke', '#000')
+      .style('stroke-width', 3)
+      .style('opacity', 1)
+
+    // Dibujar ejes con marcas y números
+    const xAxis = d3.axisBottom(xScale)
+      .tickSize(6)
+      .tickPadding(8)
+      .tickFormat(d3.format('.0f'))
       
     const yAxis = d3.axisLeft(yScale)
-      .tickSize(-innerWidth)
-      .tickPadding(10)
+      .tickSize(6)
+      .tickPadding(8)
+      .tickFormat(d3.format('.0f'))
 
     g.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0, ${innerHeight})`)
       .call(xAxis)
-      .style('color', '#666')
+      .style('color', '#333')
       .style('font-size', '12px')
+      .style('font-weight', 'bold')
 
     g.append('g')
       .attr('class', 'y-axis')
       .call(yAxis)
-      .style('color', '#666')
+      .style('color', '#333')
       .style('font-size', '12px')
+      .style('font-weight', 'bold')
 
     // Etiquetas de ejes
     g.append('text')
