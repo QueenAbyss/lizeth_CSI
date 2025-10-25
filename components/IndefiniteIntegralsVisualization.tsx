@@ -48,6 +48,22 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
     return () => clearInterval(interval)
   }, [])
 
+  // Logro de bienvenida inmediato
+  useEffect(() => {
+    const logroBienvenida = {
+      id: 'bienvenido_visualizacion',
+      nombre: 'Bienvenido',
+      descripcion: 'Has entrado a la visualización de Integrales Indefinidas',
+      icono: '🎉'
+    }
+    
+    setLogrosDesbloqueados([logroBienvenida])
+    setMostrarLogros(true)
+    
+    // Ocultar notificación después de 3 segundos
+    setTimeout(() => setMostrarLogros(false), 3000)
+  }, [])
+
   // Verificar logros cuando cambie la función o constante (no cada segundo)
   useEffect(() => {
     const verificarLogros = () => {
@@ -61,7 +77,8 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
           funcionSeleccionada: selectedFunction,
           constanteC: constantC,
           tiempoEnVisualizacion: tiempoTranscurrido,
-          familiaVisible: showFamily
+          familiaVisible: showFamily,
+          isAnimating: isAnimating
         }
 
         // Verificar logros específicos del cristal
@@ -97,7 +114,8 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
             funcionSeleccionada: selectedFunction,
             constanteC: constantC,
             tiempoEnVisualizacion: tiempoTranscurrido,
-            familiaVisible: showFamily
+            familiaVisible: showFamily,
+            isAnimating: isAnimating
           }
 
           const nuevosLogros = verificarLogrosCristal(datosCristal)
@@ -124,40 +142,141 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
   const verificarLogrosCristal = (datos: any) => {
     const logrosDesbloqueados: any[] = []
 
-    // Logro: Explorador de Familias (cambiar función 3 veces)
-    if (datos.funcionSeleccionada && datos.tiempoEnVisualizacion > 10) {
+    // Logro: Bienvenido (inmediato)
+    if (datos.tiempoEnVisualizacion >= 1) {
+      logrosDesbloqueados.push({
+        id: 'bienvenido_visualizacion',
+        nombre: 'Bienvenido',
+        descripcion: 'Has entrado a la visualización de Integrales Indefinidas',
+        icono: '🎉'
+      })
+    }
+
+    // Logro: Primer Paso (3 segundos)
+    if (datos.tiempoEnVisualizacion >= 3) {
+      logrosDesbloqueados.push({
+        id: 'primer_paso_visualizacion',
+        nombre: 'Primer Paso',
+        descripcion: 'Has estado en la visualización por 3 segundos',
+        icono: '👶'
+      })
+    }
+
+    // Logro: Explorador de Familias (8 segundos)
+    if (datos.tiempoEnVisualizacion >= 8) {
       logrosDesbloqueados.push({
         id: 'explorador_familias',
         nombre: 'Explorador de Familias',
-        descripcion: 'Explora diferentes funciones en la visualización',
-        icono: '🌟',
-        puntos: 10
+        descripcion: 'Has explorado la visualización por 8 segundos',
+        icono: '🌟'
       })
     }
 
-    // Logro: Maestro de la Constante (cambiar C 5 veces)
-    if (datos.constanteC !== 0 && datos.tiempoEnVisualizacion > 15) {
+    // Logro: Maestro de la Constante (cambiar C)
+    if (datos.constanteC !== 0) {
       logrosDesbloqueados.push({
         id: 'maestro_constante',
         nombre: 'Maestro de la Constante',
-        descripcion: 'Domina el uso de la constante C',
-        icono: '🎯',
-        puntos: 15
+        descripcion: 'Has modificado la constante C',
+        icono: '🎯'
       })
     }
 
-    // Logro: Observador de Familias (mostrar familia por 30 segundos)
-    if (datos.familiaVisible && datos.tiempoEnVisualizacion > 30) {
+    // Logro: Observador de Familias (mostrar familia)
+    if (datos.familiaVisible) {
       logrosDesbloqueados.push({
         id: 'observador_familias',
         nombre: 'Observador de Familias',
-        descripcion: 'Observa las familias de antiderivadas por tiempo prolongado',
-        icono: '👁️',
-        puntos: 20
+        descripcion: 'Has activado la visualización de familias',
+        icono: '👁️'
+      })
+    }
+
+    // Logro: Explorador de Funciones (cambiar función)
+    if (datos.funcionSeleccionada && datos.funcionSeleccionada !== 'quadratic') {
+      logrosDesbloqueados.push({
+        id: 'explorador_funciones',
+        nombre: 'Explorador de Funciones',
+        descripcion: 'Has cambiado la función seleccionada',
+        icono: '🔄'
+      })
+    }
+
+    // Logro: Persistente (30 segundos)
+    if (datos.tiempoEnVisualizacion >= 30) {
+      logrosDesbloqueados.push({
+        id: 'persistente_visualizacion',
+        nombre: 'Persistente',
+        descripcion: 'Has estado en la visualización por 30 segundos',
+        icono: '⏰'
+      })
+    }
+
+    // Logro: Animador (si está animando)
+    if (datos.isAnimating) {
+      logrosDesbloqueados.push({
+        id: 'animador',
+        nombre: 'Animador',
+        descripcion: 'Has activado la animación de la familia',
+        icono: '🎬'
       })
     }
 
     return logrosDesbloqueados
+  }
+
+  // Función para obtener todos los logros disponibles
+  const obtenerTodosLosLogros = () => {
+    return [
+      {
+        id: 'bienvenido_visualizacion',
+        nombre: 'Bienvenido',
+        descripcion: 'Has entrado a la visualización de Integrales Indefinidas',
+        icono: '🎉'
+      },
+      {
+        id: 'primer_paso_visualizacion',
+        nombre: 'Primer Paso',
+        descripcion: 'Has estado en la visualización por 3 segundos',
+        icono: '👶'
+      },
+      {
+        id: 'explorador_familias',
+        nombre: 'Explorador de Familias',
+        descripcion: 'Has explorado la visualización por 8 segundos',
+        icono: '🌟'
+      },
+      {
+        id: 'maestro_constante',
+        nombre: 'Maestro de la Constante',
+        descripcion: 'Has modificado la constante C',
+        icono: '🎯'
+      },
+      {
+        id: 'observador_familias',
+        nombre: 'Observador de Familias',
+        descripcion: 'Has activado la visualización de familias',
+        icono: '👁️'
+      },
+      {
+        id: 'explorador_funciones',
+        nombre: 'Explorador de Funciones',
+        descripcion: 'Has cambiado la función seleccionada',
+        icono: '🔄'
+      },
+      {
+        id: 'persistente_visualizacion',
+        nombre: 'Persistente',
+        descripcion: 'Has estado en la visualización por 30 segundos',
+        icono: '⏰'
+      },
+      {
+        id: 'animador',
+        nombre: 'Animador',
+        descripcion: 'Has activado la animación de la familia',
+        icono: '🎬'
+      }
+    ]
   }
   
   // Dominio de la gráfica
@@ -490,6 +609,50 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
           </div>
         </div>
       )}
+
+      {/* Panel de Logros Disponibles */}
+      <div className="achievements-panel mb-6 p-4 bg-white rounded-lg shadow-lg">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <span className="mr-2">🏆</span>
+          Logros Disponibles
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {obtenerTodosLosLogros().map((logro) => {
+            const estaDesbloqueado = logrosDesbloqueados.some(l => l.id === logro.id)
+            return (
+              <div
+                key={logro.id}
+                className={`achievement-card p-3 rounded-lg border-2 transition-all duration-300 ${
+                  estaDesbloqueado
+                    ? 'border-green-500 bg-green-50 shadow-md'
+                    : 'border-gray-300 bg-gray-50 opacity-60'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className={`text-2xl ${estaDesbloqueado ? 'grayscale-0' : 'grayscale'}`}>
+                    {logro.icono}
+                  </div>
+                  <div className="flex-1">
+                    <div className={`font-semibold ${estaDesbloqueado ? 'text-green-800' : 'text-gray-600'}`}>
+                      {logro.nombre}
+                    </div>
+                    <div className={`text-sm ${estaDesbloqueado ? 'text-green-700' : 'text-gray-500'}`}>
+                      {logro.descripcion}
+                    </div>
+                  </div>
+                  {estaDesbloqueado && (
+                    <div className="text-green-500">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
 
       {/* Controles principales */}
       <div className="controls-panel mb-6 p-4 bg-white rounded-lg shadow-lg">
