@@ -457,12 +457,29 @@ export function PTFCDemo({ onBack }: PTFCDemoProps) {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {logros.map((logro, index) => (
-                      <div key={index} className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
-                        <span className="text-2xl">{logro.icono}</span>
-                        <div>
-                          <div className="font-medium text-yellow-800">{logro.nombre}</div>
-                          <div className="text-sm text-yellow-600">{logro.descripcion}</div>
+                      <div key={index} className={`flex items-center space-x-3 p-3 rounded-lg border-2 transition-all ${
+                        logro.desbloqueado
+                          ? 'bg-green-50 border-green-300 shadow-md'
+                          : 'bg-gray-50 border-gray-300 opacity-60'
+                      }`}>
+                        <span className={`text-2xl ${logro.desbloqueado ? 'grayscale-0' : 'grayscale'}`}>
+                          {logro.icono}
+                        </span>
+                        <div className="flex-1">
+                          <div className={`font-medium ${logro.desbloqueado ? 'text-green-800' : 'text-gray-600'}`}>
+                            {logro.nombre}
+                          </div>
+                          <div className={`text-sm ${logro.desbloqueado ? 'text-green-700' : 'text-gray-500'}`}>
+                            {logro.descripcion}
+                          </div>
                         </div>
+                        {logro.desbloqueado && (
+                          <div className="text-green-500">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

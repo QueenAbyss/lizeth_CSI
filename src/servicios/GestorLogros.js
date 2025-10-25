@@ -142,6 +142,20 @@ export class GestorLogros {
       }),
 
       new Logro({
+        id: 'puente_limites',
+        nombre: 'Manipulador de Límites',
+        descripcion: 'Mueve los límites de integración en el Puente del Teorema',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'puenteTeorema',
+          cambiosLimites: 3
+        },
+        icono: '📏',
+        puntos: 15,
+        raridad: 'comun'
+      }),
+
+      new Logro({
         id: 'torre_climber',
         nombre: 'Escalador de Torres',
         descripcion: 'Completa la Torre del Valor Medio',

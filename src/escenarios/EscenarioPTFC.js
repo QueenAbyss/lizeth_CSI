@@ -183,9 +183,45 @@ export class EscenarioPTFC extends Escenario {
                 const intervaloX = { min: a, max: b }
                 this.transformador.actualizarIntervaloX(intervaloX)
             }
+            
+            // Rastrear cambios de límites para logros
+            this.rastrearCambioLimites()
         } catch (error) {
             console.error('Error actualizando límites:', error)
             this.onError(error)
+        }
+    }
+    
+    // ✅ RASTREAR CAMBIO DE LÍMITES
+    rastrearCambioLimites() {
+        try {
+            const usuarioActual = this.gestorLogros.servicioAuth.obtenerUsuarioActual()
+            if (usuarioActual && usuarioActual.esEstudiante()) {
+                // Inicializar contador si no existe
+                if (!usuarioActual.progreso.cambiosLimitesPuente) {
+                    usuarioActual.progreso.cambiosLimitesPuente = 0
+                }
+                
+                // Incrementar contador
+                usuarioActual.progreso.cambiosLimitesPuente++
+                
+                console.log(`📏 Cambio de límites en Puente del Teorema: ${usuarioActual.progreso.cambiosLimitesPuente}`)
+                
+                // Verificar logros después del cambio
+                const logrosDesbloqueados = this.gestorLogros.verificarLogrosEstudiante(usuarioActual.id, 'puenteTeorema')
+                if (logrosDesbloqueados.length > 0) {
+                    console.log('🏆 Logros desbloqueados por cambio de límites:', logrosDesbloqueados)
+                    
+                    // Procesar logros desbloqueados
+                    logrosDesbloqueados.forEach(logro => {
+                        this.estadoPTFC.agregarLogroDesbloqueado(logro)
+                        this.gestorTiempo.registrarLogro(logro)
+                        this.onLogroDesbloqueado(logro)
+                    })
+                }
+            }
+        } catch (error) {
+            console.error('Error rastreando cambio de límites:', error)
         }
     }
     
@@ -337,12 +373,70 @@ export class EscenarioPTFC extends Escenario {
         try {
             const usuarioActual = this.gestorLogros.servicioAuth.obtenerUsuarioActual()
             if (usuarioActual && usuarioActual.esEstudiante()) {
-                return this.gestorLogros.obtenerLogrosEstudiante(usuarioActual.id)
+                // Verificar si el escenario está completado y marcarlo si es necesario
+                this.verificarYMarcarCompletado(usuarioActual)
+                
+                // Obtener solo los logros específicos del Teorema Fundamental
+                const todosLosLogros = this.gestorLogros.obtenerLogrosDisponibles()
+                const logrosPTFC = todosLosLogros.filter(logro => {
+                    // Solo incluir logros específicos del Primer Teorema Fundamental (Puente del Teorema)
+                    if (logro.criterios && logro.criterios.escenario) {
+                        return logro.criterios.escenario === 'puenteTeorema'
+                    }
+                    // Incluir logros de completitud que requieren SOLO el Primer Teorema Fundamental
+                    if (logro.criterios && logro.criterios.escenariosCompletados) {
+                        const escenariosRequeridos = logro.criterios.escenariosCompletados
+                        // Solo incluir si requiere únicamente el puenteTeorema
+                        return escenariosRequeridos.length === 1 && escenariosRequeridos.includes('puenteTeorema')
+                    }
+                    return false
+                }).slice(0, 5) // Limitar a máximo 5 logros
+                
+                // Agregar estado de desbloqueo a cada logro
+                const logrosConEstado = logrosPTFC.map(logro => {
+                    const estaDesbloqueado = usuarioActual.progreso.logros.includes(logro.id)
+                    console.log(`🔍 Verificando logro ${logro.id}: ${logro.nombre} - Desbloqueado: ${estaDesbloqueado}`)
+                    return {
+                        ...logro,
+                        desbloqueado: estaDesbloqueado
+                    }
+                })
+                
+                return logrosConEstado
             }
         } catch (error) {
             console.error('Error obteniendo logros:', error)
         }
         return []
+    }
+    
+    // ✅ VERIFICAR Y MARCAR ESCENARIO COMO COMPLETADO
+    verificarYMarcarCompletado(usuarioActual) {
+        try {
+            console.log(`🔍 Verificando completitud del escenario:`)
+            console.log(`  - verificacionTeorema: ${this.estadoPTFC.verificacionTeorema}`)
+            console.log(`  - escenariosCompletados: ${usuarioActual.progreso.escenariosCompletados}`)
+            console.log(`  - incluye puenteTeorema: ${usuarioActual.progreso.escenariosCompletados.includes('puenteTeorema')}`)
+            
+            // Verificar si el teorema se ha verificado correctamente
+            if (this.estadoPTFC.verificacionTeorema && 
+                !usuarioActual.progreso.escenariosCompletados.includes('puenteTeorema')) {
+                
+                console.log('🎉 Escenario del Puente del Teorema Fundamental completado!')
+                usuarioActual.completarEscenario('puenteTeorema')
+                
+                // Verificar logros después de marcar como completado
+                const logrosDesbloqueados = this.gestorLogros.verificarLogrosEstudiante(usuarioActual.id, 'puenteTeorema')
+                if (logrosDesbloqueados.length > 0) {
+                    console.log('🏆 Logros desbloqueados:', logrosDesbloqueados)
+                    this.onLogroDesbloqueado(logrosDesbloqueados)
+                }
+            } else {
+                console.log('❌ Escenario no completado aún')
+            }
+        } catch (error) {
+            console.error('Error verificando completitud del escenario:', error)
+        }
     }
     
     // ✅ OBTENER TIEMPO
@@ -425,25 +519,28 @@ export class EscenarioPTFC extends Escenario {
                 tiempoExploracion: tiempo
             }
             
-            try {
-              const usuarioActual = this.gestorLogros.servicioAuth.obtenerUsuarioActual()
-              if (usuarioActual && usuarioActual.esEstudiante()) {
-                const logrosDesbloqueados = this.gestorLogros.verificarLogrosEstudiante(usuarioActual.id)
-                if (logrosDesbloqueados.length > 0) {
-                  console.log('Logros desbloqueados:', logrosDesbloqueados)
-                }
-              }
-            } catch (error) {
-              console.error('Error verificando logros:', error)
-            }
-            
-            if (logrosDesbloqueados.length > 0) {
+        try {
+            const usuarioActual = this.gestorLogros.servicioAuth.obtenerUsuarioActual()
+            if (usuarioActual && usuarioActual.esEstudiante()) {
+              // Verificar si el escenario está completado y marcarlo si es necesario
+              this.verificarYMarcarCompletado(usuarioActual)
+              
+              // Verificar logros específicos del Puente del Teorema Fundamental
+              const logrosDesbloqueados = this.gestorLogros.verificarLogrosEstudiante(usuarioActual.id, 'puenteTeorema')
+              if (logrosDesbloqueados.length > 0) {
+                console.log('🏆 Logros desbloqueados en PTFC:', logrosDesbloqueados)
+                
+                // Procesar logros desbloqueados
                 logrosDesbloqueados.forEach(logro => {
                     this.estadoPTFC.agregarLogroDesbloqueado(logro)
                     this.gestorTiempo.registrarLogro(logro)
                     this.onLogroDesbloqueado(logro)
                 })
+              }
             }
+          } catch (error) {
+            console.error('Error verificando logros:', error)
+          }
         } catch (error) {
             console.error('Error verificando logros:', error)
             this.onError(error)

@@ -77,12 +77,14 @@ export class Estudiante extends Usuario {
       logrosObtenidos: this.progreso.logros.length,
       ultimaActividad: this.progreso.ultimaActividad,
       historialActividad: this.progreso.historialActividad || [], // Incluir historial de actividades
-      // Propiedades específicas del Jardín de Riemann
-      precisionJardin: this.progreso.precisionJardin || 0,
-      macetasUsadas: this.progreso.macetasUsadas || 0,
-      cambiosLimites: this.progreso.cambiosLimites || 0,
-      funcionesProbadas: this.progreso.funcionesProbadas || 0,
-      hechizosUsados: this.progreso.hechizosUsados || 0,
+            // Propiedades específicas del Jardín de Riemann
+            precisionJardin: this.progreso.precisionJardin || 0,
+            macetasUsadas: this.progreso.macetasUsadas || 0,
+            cambiosLimites: this.progreso.cambiosLimites || 0,
+            funcionesProbadas: this.progreso.funcionesProbadas || 0,
+            hechizosUsados: this.progreso.hechizosUsados || 0,
+            // Propiedades específicas del Puente del Teorema Fundamental
+            cambiosLimitesPuente: this.progreso.cambiosLimitesPuente || 0,
       progresoGeneral: this.escenariosHabilitados.length > 0 
         ? (this.progreso.escenariosCompletados.length / this.escenariosHabilitados.length) * 100 
         : 0

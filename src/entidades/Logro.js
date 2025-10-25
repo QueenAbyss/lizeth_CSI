@@ -78,6 +78,10 @@ export class Logro {
         // Verificar uso de macetas en el Jardín de Riemann
         const macetasRequeridas = this.criterios.macetasMinimas || 10
         return progreso.macetasUsadas >= macetasRequeridas
+      case 'puente_limites':
+        // Verificar cambios de límites en el Puente del Teorema Fundamental
+        const cambiosLimitesPuente = progreso.cambiosLimitesPuente || 0
+        return cambiosLimitesPuente >= (this.criterios.cambiosLimites || 3)
       default:
         return false
     }
