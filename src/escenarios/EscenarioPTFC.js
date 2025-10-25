@@ -176,6 +176,10 @@ export class EscenarioPTFC extends Escenario {
     // ✅ ACTUALIZAR LÍMITES
     actualizarLimites(a, b) {
         try {
+            // Verificar si los límites realmente cambiaron
+            const limitesActuales = this.estadoPTFC.obtenerLimites()
+            const limitesCambiaron = limitesActuales.a !== a || limitesActuales.b !== b
+            
             this.gestorVisualizacion.actualizarLimites(a, b)
             
             // Actualizar transformador
@@ -184,8 +188,10 @@ export class EscenarioPTFC extends Escenario {
                 this.transformador.actualizarIntervaloX(intervaloX)
             }
             
-            // Rastrear cambios de límites para logros
-            this.rastrearCambioLimites()
+            // Solo rastrear si los límites realmente cambiaron
+            if (limitesCambiaron) {
+                this.rastrearCambioLimites()
+            }
         } catch (error) {
             console.error('Error actualizando límites:', error)
             this.onError(error)
@@ -506,6 +512,9 @@ export class EscenarioPTFC extends Escenario {
             const limites = this.estadoPTFC.obtenerLimites()
             const posicionX = this.estadoPTFC.obtenerPosicionX()
             const tiempo = this.gestorTiempo.obtenerTiempoSesion()
+            
+            // Actualizar el estado del PTFC con los cálculos
+            this.estadoPTFC.establecerCalculos(calculos)
             
             const datos = {
                 posicionX,

@@ -88,6 +88,26 @@ export function PTFCDemo({ onBack }: PTFCDemoProps) {
     }
   }, [calculos, logros, tiempo, renderizarCalculos])
   
+  // ✅ FORZAR RENDERIZADO AL CAMBIAR A PESTAÑA DE VISUALIZACIÓN
+  useEffect(() => {
+    if (tabActivo === 'visualizacion') {
+      console.log('🎨 Regresando a pestaña de visualización, reconfigurando canvas y renderizando...')
+      setTimeout(() => {
+        // Reconfigurar canvas si están disponibles
+        if (canvasPuenteRef.current && canvasCartesianoRef.current) {
+          console.log('🔧 Reconfigurando canvas PTFC...')
+          configurarCanvas(
+            canvasPuenteRef.current,
+            canvasCartesianoRef.current,
+            containerTooltipRef.current ?? undefined
+          )
+        }
+        // Forzar renderizado
+        renderizar()
+      }, 200)
+    }
+  }, [tabActivo, renderizar, configurarCanvas])
+  
   // ✅ MANEJAR CAMBIO DE FUNCIÓN
   const handleFuncionChange = useCallback((funcion: string) => {
     setFuncionSeleccionada(funcion)
