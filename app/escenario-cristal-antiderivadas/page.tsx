@@ -21,8 +21,7 @@ import {
   ArrowLeftIcon,
   PlayIcon,
   PauseIcon,
-  RotateCcwIcon,
-  SparkleIcon
+  RotateCcwIcon
 } from 'lucide-react'
 
 // Importar las clases del escenario
@@ -215,8 +214,8 @@ const VariableChangeVisualization = ({
               <div className="flex items-center justify-between">
                 <span>Logros desbloqueados</span>
                 <span className="text-purple-600">▼</span>
-              </div>
-            </div>
+                </div>
+                </div>
           </CardContent>
         </Card>
 
@@ -404,16 +403,16 @@ export default function EscenarioCristalAntiderivadas() {
                     <DiamondIcon className="w-8 h-8 text-pink-500" />
               </CardTitle>
                   <CardDescription className="text-lg text-purple-600 mt-2 flex items-center justify-center gap-2">
-                    <SparkleIcon className="w-5 h-5 text-yellow-500" />
+                    <SparklesIcon className="w-5 h-5 text-yellow-500" />
                     Descubre las familias de antiderivadas y cómo la constante C crea infinitas posibilidades
-                    <SparkleIcon className="w-5 h-5 text-yellow-500" />
+                    <SparklesIcon className="w-5 h-5 text-yellow-500" />
                   </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                   <div className="bg-white rounded-lg p-6 shadow-lg">
-                    <h2 className="text-xl font-semibold mb-4">¿Qué son las Integrales Indefinidas?</h2>
+                    <h2 className="text-xl font-semibold mb-4">Que son las Integrales Indefinidas?</h2>
                     <p className="text-gray-700 mb-4">
-                      Las integrales indefinidas son el proceso inverso de la derivación. Si F'(x) = f(x),
+                      Las integrales indefinidas son el proceso inverso de la derivacion. Si F'(x) = f(x),
                       entonces ∫f(x)dx = F(x) + C, donde C es una constante arbitraria.
                     </p>
 
@@ -450,28 +449,28 @@ export default function EscenarioCristalAntiderivadas() {
                   <CardTitle className="text-3xl font-bold text-purple-800 flex items-center justify-center gap-3">
                     <Wand2Icon className="w-8 h-8" />
                     Cambio de Variable
-                    <SparkleIcon className="w-8 h-8 text-pink-500" />
+                    <SparklesIcon className="w-8 h-8 text-pink-500" />
                   </CardTitle>
                   <CardDescription className="text-lg text-purple-600 mt-2 flex items-center justify-center gap-2">
-                    <SparkleIcon className="w-5 h-5 text-yellow-500" />
+                    <SparklesIcon className="w-5 h-5 text-yellow-500" />
                     Aprende el arte de la transformación mágica que simplifica las integrales más complejas
-                    <SparkleIcon className="w-5 h-5 text-yellow-500" />
+                    <SparklesIcon className="w-5 h-5 text-yellow-500" />
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="bg-white rounded-lg p-6 shadow-lg">
-                    <h2 className="text-xl font-semibold mb-4">¿Qué es el Cambio de Variable?</h2>
+                    <h2 className="text-xl font-semibold mb-4">Que es el Cambio de Variable?</h2>
                     <p className="text-gray-700 mb-4">
-                      El cambio de variable (o sustitución) es una técnica que transforma integrales complejas
-                      en formas más simples mediante la sustitución u = g(x).
+                      El cambio de variable (o sustitucion) es una tecnica que transforma integrales complejas
+                      en formas mas simples mediante la sustitucion u = g(x).
                     </p>
 
                     <div className="bg-purple-50 p-4 rounded-lg">
-                      <h3 className="font-semibold text-purple-800">Pasos del Método:</h3>
+                      <h3 className="font-semibold text-purple-800">Pasos del Metodo:</h3>
                       <ol className="list-decimal list-inside text-purple-700 mt-2 space-y-1">
-                        <li><strong>Identificar:</strong> Encontrar la función interna g(x) para sustituir</li>
+                        <li><strong>Identificar:</strong> Encontrar la funcion interna g(x) para sustituir</li>
                         <li><strong>Sustituir:</strong> Hacer u = g(x) y du = g'(x)dx</li>
-                        <li><strong>Integrar:</strong> Resolver la integral en términos de u</li>
+                        <li><strong>Integrar:</strong> Resolver la integral en terminos de u</li>
                         <li><strong>Reemplazar:</strong> Sustituir u de vuelta con g(x)</li>
                       </ol>
                   </div>

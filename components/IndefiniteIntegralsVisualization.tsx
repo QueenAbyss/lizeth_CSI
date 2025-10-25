@@ -23,7 +23,7 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
   
   // Referencias para D3
   const svgRef = useRef<SVGSVGElement>(null)
-  const [svg, setSvg] = useState<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null)
+  const [svg, setSvg] = useState<any>(null)
   
   // Configuración de la gráfica
   const margin = { top: 20, right: 20, bottom: 60, left: 60 }
