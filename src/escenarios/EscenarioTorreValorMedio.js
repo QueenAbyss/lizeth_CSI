@@ -323,7 +323,33 @@ export class EscenarioTorreValorMedio extends Escenario {
         try {
             const usuarioActual = this.gestorLogros.servicioAuth.obtenerUsuarioActual()
             if (usuarioActual && usuarioActual.esEstudiante()) {
-                return this.gestorLogros.obtenerLogrosEstudiante(usuarioActual.id)
+                // Obtener solo los logros específicos de la Torre del Valor Medio
+                const todosLosLogros = this.gestorLogros.obtenerLogrosDisponibles()
+                const logrosTorre = todosLosLogros.filter(logro => {
+                    // Solo incluir logros específicos de la Torre del Valor Medio
+                    if (logro.criterios && logro.criterios.escenario) {
+                        return logro.criterios.escenario === 'torreValorMedio'
+                    }
+                    // Incluir logros de completitud que requieren SOLO la Torre del Valor Medio
+                    if (logro.criterios && logro.criterios.escenariosCompletados) {
+                        const escenariosRequeridos = logro.criterios.escenariosCompletados
+                        // Solo incluir si requiere únicamente la torreValorMedio
+                        return escenariosRequeridos.length === 1 && escenariosRequeridos.includes('torreValorMedio')
+                    }
+                    return false
+                }).slice(0, 5) // Limitar a máximo 5 logros
+                
+                // Agregar estado de desbloqueo a cada logro
+                const logrosConEstado = logrosTorre.map(logro => {
+                    const estaDesbloqueado = usuarioActual.progreso.logros.includes(logro.id)
+                    console.log(`🔍 Verificando logro Torre: ${logro.id}: ${logro.nombre} - Desbloqueado: ${estaDesbloqueado}`)
+                    return {
+                        ...logro,
+                        desbloqueado: estaDesbloqueado
+                    }
+                })
+                
+                return logrosConEstado
             }
         } catch (error) {
             console.error('Error obteniendo logros:', error)

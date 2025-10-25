@@ -85,6 +85,12 @@ export class Estudiante extends Usuario {
             hechizosUsados: this.progreso.hechizosUsados || 0,
             // Propiedades específicas del Puente del Teorema Fundamental
             cambiosLimitesPuente: this.progreso.cambiosLimitesPuente || 0,
+            // Propiedades específicas del Teorema del Valor Medio
+            puntoCEncontrado: this.progreso.puntoCEncontrado || false,
+            precisionEstimacion: this.progreso.precisionEstimacion || 0,
+            pendienteCalculada: this.progreso.pendienteCalculada || false,
+            teoremaVerificado: this.progreso.teoremaVerificado || false,
+            funcionesProbadasTorre: this.progreso.funcionesProbadasTorre || 0,
       progresoGeneral: this.escenariosHabilitados.length > 0 
         ? (this.progreso.escenariosCompletados.length / this.escenariosHabilitados.length) * 100 
         : 0

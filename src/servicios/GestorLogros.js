@@ -223,6 +223,82 @@ export class GestorLogros {
         raridad: 'raro'
       }),
 
+      // Logros específicos del Teorema del Valor Medio
+      new Logro({
+        id: 'cazador_c',
+        nombre: 'Cazador de C',
+        descripcion: 'Encuentra el punto c del teorema del valor medio',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'torreValorMedio',
+          teorema: 'valor-medio',
+          puntoCEncontrado: true
+        },
+        icono: '🎯',
+        puntos: 15,
+        raridad: 'comun'
+      }),
+
+      new Logro({
+        id: 'estimador_preciso',
+        nombre: 'Estimador Preciso',
+        descripcion: 'Haz una estimación del punto c con error menor al 5%',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'torreValorMedio',
+          teorema: 'valor-medio',
+          precisionEstimacion: 95
+        },
+        icono: '🎯',
+        puntos: 20,
+        raridad: 'raro'
+      }),
+
+      new Logro({
+        id: 'calculador_pendiente',
+        nombre: 'Calculador de Pendientes',
+        descripcion: 'Calcula correctamente la pendiente de la recta secante',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'torreValorMedio',
+          teorema: 'valor-medio',
+          pendienteCalculada: true
+        },
+        icono: '📐',
+        puntos: 12,
+        raridad: 'comun'
+      }),
+
+      new Logro({
+        id: 'verificador_teorema',
+        nombre: 'Verificador del Teorema',
+        descripcion: 'Verifica que f\'(c) = (f(b) - f(a))/(b - a)',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'torreValorMedio',
+          teorema: 'valor-medio',
+          teoremaVerificado: true
+        },
+        icono: '✅',
+        puntos: 25,
+        raridad: 'raro'
+      }),
+
+      new Logro({
+        id: 'explorador_funciones',
+        nombre: 'Explorador de Funciones',
+        descripcion: 'Prueba el teorema con al menos 3 funciones diferentes',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'torreValorMedio',
+          teorema: 'valor-medio',
+          funcionesProbadas: 3
+        },
+        icono: '🔍',
+        puntos: 18,
+        raridad: 'comun'
+      }),
+
       new Logro({
         id: 'maestro_potencias',
         nombre: 'Maestro de Potencias',

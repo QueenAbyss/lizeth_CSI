@@ -72,8 +72,8 @@ export class Logro {
         return hechizosUsados >= (this.criterios.hechizosUsados || 2)
       case 'jardin_precision':
         // Verificar precisión en el Jardín de Riemann
-        const precisionRequerida = this.criterios.precisionMinima || 95
-        return progreso.precisionJardin >= precisionRequerida
+        const precisionJardinRequerida = this.criterios.precisionMinima || 95
+        return progreso.precisionJardin >= precisionJardinRequerida
       case 'jardin_macetas':
         // Verificar uso de macetas en el Jardín de Riemann
         const macetasRequeridas = this.criterios.macetasMinimas || 10
@@ -82,6 +82,23 @@ export class Logro {
         // Verificar cambios de límites en el Puente del Teorema Fundamental
         const cambiosLimitesPuente = progreso.cambiosLimitesPuente || 0
         return cambiosLimitesPuente >= (this.criterios.cambiosLimites || 3)
+      case 'cazador_c':
+        // Verificar que se encontró el punto c del teorema del valor medio
+        return progreso.puntoCEncontrado === true
+      case 'estimador_preciso':
+        // Verificar precisión de estimación del punto c
+        const precisionEstimacionRequerida = this.criterios.precisionEstimacion || 95
+        return progreso.precisionEstimacion >= precisionEstimacionRequerida
+      case 'calculador_pendiente':
+        // Verificar que se calculó correctamente la pendiente
+        return progreso.pendienteCalculada === true
+      case 'verificador_teorema':
+        // Verificar que se verificó el teorema del valor medio
+        return progreso.teoremaVerificado === true
+      case 'explorador_funciones':
+        // Verificar funciones probadas en el teorema del valor medio
+        const funcionesProbadasTorre = progreso.funcionesProbadasTorre || 0
+        return funcionesProbadasTorre >= (this.criterios.funcionesProbadas || 3)
       default:
         return false
     }
