@@ -28,13 +28,20 @@ import {
   Target
 } from 'lucide-react'
 
+type EscenarioKey = 'jardinRiemann' | 'puenteTeorema' | 'torreValorMedio' | 'cristalAntiderivadas'
+
 export default function DashboardDocente() {
   const { usuario, cerrarSesion, obtenerUsuarios, eliminarUsuario, verificarPermisos } = useAuth()
   const router = useRouter()
   const [estudiantes, setEstudiantes] = useState<any[]>([])
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState<string | null>(null)
-  const [escenarios, setEscenarios] = useState({
-    jardinRiemann: { habilitado: true, nombre: 'Jardín de Riemann' },
+  const [escenarios, setEscenarios] = useState<{
+    jardinRiemann: { habilitado: boolean; nombre: string };
+    puenteTeorema: { habilitado: boolean; nombre: string };
+    torreValorMedio: { habilitado: boolean; nombre: string };
+    cristalAntiderivadas: { habilitado: boolean; nombre: string };
+  }>({
+    jardinRiemann: { habilitado: true, nombre: 'Jardin de Riemann' },
     puenteTeorema: { habilitado: true, nombre: 'Puente del Teorema Fundamental' },
     torreValorMedio: { habilitado: true, nombre: 'Torre del Valor Medio' },
     cristalAntiderivadas: { habilitado: true, nombre: 'Cristal de Antiderivadas' }
@@ -53,7 +60,7 @@ export default function DashboardDocente() {
     router.push('/login')
   }
 
-  const toggleEscenario = (escenario: string) => {
+  const toggleEscenario = (escenario: EscenarioKey) => {
     setEscenarios(prev => ({
       ...prev,
       [escenario]: {
@@ -64,7 +71,7 @@ export default function DashboardDocente() {
   }
 
   const handleEliminarEstudiante = (estudianteId: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este estudiante?')) {
+    if (window.confirm('¿Estas seguro de que quieres eliminar este estudiante?')) {
       eliminarUsuario(estudianteId)
       setEstudiantes(prev => prev.filter(e => e.id !== estudianteId))
     }
@@ -75,8 +82,10 @@ export default function DashboardDocente() {
     const estudiantesActivos = estudiantes.filter(e => e.activo).length
     const tiempoPromedio = estudiantes.reduce((sum, e) => 
       sum + (e.progreso?.tiempoTotal || 0), 0) / totalEstudiantes || 0
-    const escenariosCompletados = estudiantes.reduce((sum, e) => 
-      sum + (e.progreso?.escenariosCompletados?.length || 0), 0)
+    const escenariosCompletados = estudiantes.reduce((sum, e) => {
+      const stats = e.obtenerEstadisticas()
+      return sum + (stats.escenariosCompletadosCount || 0)
+    }, 0)
 
     return {
       totalEstudiantes,
@@ -110,7 +119,7 @@ export default function DashboardDocente() {
                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                Cerrar Sesión
+                Cerrar Sesion
               </Button>
             </div>
           </div>
@@ -179,9 +188,9 @@ export default function DashboardDocente() {
           {/* Tabs de Gestión */}
           <Tabs defaultValue="estudiantes" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="estudiantes">Gestión de Estudiantes</TabsTrigger>
-              <TabsTrigger value="escenarios">Configuración de Escenarios</TabsTrigger>
-              <TabsTrigger value="reportes">Reportes y Análisis</TabsTrigger>
+              <TabsTrigger value="estudiantes">Gestion de Estudiantes</TabsTrigger>
+              <TabsTrigger value="escenarios">Configuracion de Escenarios</TabsTrigger>
+              <TabsTrigger value="reportes">Reportes y Analisis</TabsTrigger>
             </TabsList>
 
             <TabsContent value="estudiantes" className="space-y-6">
@@ -232,7 +241,7 @@ export default function DashboardDocente() {
                               <DialogHeader>
                                 <DialogTitle>Progreso de {estudiante.obtenerNombreCompleto()}</DialogTitle>
                                 <DialogDescription>
-                                  Información detallada del progreso y logros del estudiante
+                                  Informacion detallada del progreso y logros del estudiante
                                 </DialogDescription>
                               </DialogHeader>
                               <ProgresoEstudiante 
@@ -269,7 +278,7 @@ export default function DashboardDocente() {
             <TabsContent value="escenarios" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Configuración de Escenarios</CardTitle>
+                  <CardTitle>Configuracion de Escenarios</CardTitle>
                   <CardDescription>
                     Habilita o deshabilita escenarios para los estudiantes
                   </CardDescription>
@@ -289,7 +298,7 @@ export default function DashboardDocente() {
                         </div>
                         <Switch
                           checked={escenario.habilitado}
-                          onCheckedChange={() => toggleEscenario(key)}
+                          onCheckedChange={() => toggleEscenario(key as EscenarioKey)}
                         />
                       </div>
                     ))}
@@ -302,7 +311,7 @@ export default function DashboardDocente() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Escenarios Más Populares</CardTitle>
+                    <CardTitle>Escenarios Mas Populares</CardTitle>
                     <CardDescription>
                       Los escenarios con mayor tiempo de uso
                     </CardDescription>

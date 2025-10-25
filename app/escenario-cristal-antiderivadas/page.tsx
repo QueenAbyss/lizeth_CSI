@@ -59,9 +59,9 @@ export default function EscenarioCristalAntiderivadas() {
 
   // Funciones disponibles para Integrales Indefinidas
   const funciones = {
-    quadratic: { f: 'x²', F: 'x³/3 + C', color: 'red', nombre: 'Hada Cuadrática' },
-    linear: { f: 'x', F: 'x²/2 + C', color: 'blue', nombre: 'Hada Lineal' },
-    exponential: { f: 'eˣ', F: 'eˣ + C', color: 'green', nombre: 'Hada Exponencial' },
+    quadratic: { f: 'x^2', F: 'x^3/3 + C', color: 'red', nombre: 'Hada Cuadratica' },
+    linear: { f: 'x', F: 'x^2/2 + C', color: 'blue', nombre: 'Hada Lineal' },
+    exponential: { f: 'e^x', F: 'e^x + C', color: 'green', nombre: 'Hada Exponencial' },
     sine: { f: 'sin(x)', F: '-cos(x) + C', color: 'purple', nombre: 'Hada Ondulante' }
   }
 
@@ -86,17 +86,17 @@ export default function EscenarioCristalAntiderivadas() {
   const getCurrentTip = (topic: string, section: string) => {
     if (topic === 'integrales_indefinidas') {
       if (section === 'teoria') return "Recuerda que la constante C representa todas las posibles 'alturas' de la familia de antiderivadas."
-      if (section === 'visualizacion') return "Cambia el valor de C para ver cómo se desplaza toda la familia de curvas verticalmente."
+      if (section === 'visualizacion') return "Cambia el valor de C para ver como se desplaza toda la familia de curvas verticalmente."
       if (section === 'ejemplos') return "Cada función tiene su propia regla de integración. ¡Practica con diferentes tipos!"
     }
 
     if (topic === 'cambio_variable') {
-      if (section === 'teoria') return "La clave del cambio de variable es identificar qué parte de la integral necesita ser sustituida."
-      if (section === 'visualizacion') return "Observa cómo la transformación 'mueve' la función en el espacio matemático."
-      if (section === 'ejemplos') return "Siempre recuerda sustituir de vuelta al final: reemplaza u con la función original."
+      if (section === 'teoria') return "La clave del cambio de variable es identificar que parte de la integral necesita ser sustituida."
+      if (section === 'visualizacion') return "Observa como la transformacion 'mueve' la funcion en el espacio matematico."
+      if (section === 'ejemplos') return "Siempre recuerda sustituir de vuelta al final: reemplaza u con la funcion original."
     }
 
-    return "¡Explora todas las secciones para dominar estos conceptos matemáticos!"
+    return "¡Explora todas las secciones para dominar estos conceptos matematicos!"
   }
 
   return (
@@ -145,7 +145,7 @@ export default function EscenarioCristalAntiderivadas() {
               }`}
             >
               <BookIcon className="w-4 h-4" />
-              Teoría
+              Teoria
             </Button>
             <Button
               onClick={() => setSeccionActiva('visualizacion')}
@@ -156,7 +156,7 @@ export default function EscenarioCristalAntiderivadas() {
               }`}
             >
               <EyeIcon className="w-4 h-4" />
-              Visualización
+              Visualizacion
             </Button>
                     <Button
               onClick={() => setSeccionActiva('ejemplos')}
@@ -185,7 +185,7 @@ export default function EscenarioCristalAntiderivadas() {
               </CardTitle>
                   <CardDescription className="text-lg text-purple-600 mt-2 flex items-center justify-center gap-2">
                     <SparklesIcon className="w-5 h-5 text-yellow-500" />
-                    Descubre las familias de antiderivadas y cómo la constante C crea infinitas posibilidades
+                    Descubre las familias de antiderivadas y como la constante C crea infinitas posibilidades
                     <SparklesIcon className="w-5 h-5 text-yellow-500" />
                   </CardDescription>
             </CardHeader>
@@ -200,7 +200,7 @@ export default function EscenarioCristalAntiderivadas() {
                     <div className="bg-purple-50 p-4 rounded-lg">
                       <h3 className="font-semibold text-purple-800">Conceptos Clave:</h3>
                       <ul className="list-disc list-inside text-purple-700 mt-2 space-y-1">
-                        <li><strong>Antiderivada:</strong> Una función F(x) tal que F'(x) = f(x)</li>
+                        <li><strong>Antiderivada:</strong> Una funcion F(x) tal que F'(x) = f(x)</li>
                         <li><strong>Constante C:</strong> Representa todas las posibles "alturas" de la familia</li>
                         <li><strong>Familia de funciones:</strong> Infinitas curvas que difieren solo en una constante</li>
                       </ul>
@@ -234,7 +234,7 @@ export default function EscenarioCristalAntiderivadas() {
                   </CardTitle>
                   <CardDescription className="text-lg text-purple-600 mt-2 flex items-center justify-center gap-2">
                     <SparklesIcon className="w-5 h-5 text-yellow-500" />
-                    Aprende el arte de la transformación mágica que simplifica las integrales más complejas
+                    Aprende el arte de la transformacion magica que simplifica las integrales mas complejas
                     <SparklesIcon className="w-5 h-5 text-yellow-500" />
                   </CardDescription>
                 </CardHeader>

@@ -13,10 +13,16 @@ export class Estudiante extends Usuario {
       escenariosCompletados: [],
       tiempoTotal: 0,
       logros: [],
-      ultimaActividad: null
+      ultimaActividad: null,
+      historialActividad: []
     }
     this.escenariosHabilitados = datos.escenariosHabilitados || []
     this.historialActividad = datos.historialActividad || []
+    
+    // Sincronizar historialActividad con progreso.historialActividad
+    if (this.historialActividad.length > 0 && this.progreso.historialActividad.length === 0) {
+      this.progreso.historialActividad = [...this.historialActividad]
+    }
   }
 
   agregarActividad(escenario, tiempo, accion) {
@@ -30,6 +36,7 @@ export class Estudiante extends Usuario {
     }
     
     this.historialActividad.push(actividad)
+    this.progreso.historialActividad.push(actividad)
     this.progreso.ultimaActividad = new Date()
     this.progreso.tiempoTotal += tiempo
   }
@@ -63,10 +70,13 @@ export class Estudiante extends Usuario {
   obtenerEstadisticas() {
     return {
       totalEscenarios: this.escenariosHabilitados.length,
-      escenariosCompletados: this.progreso.escenariosCompletados.length,
+      escenariosCompletados: this.progreso.escenariosCompletados, // Array completo para Logro.js
+      escenariosCompletadosCount: this.progreso.escenariosCompletados.length, // Número para dashboard
       tiempoTotal: this.progreso.tiempoTotal,
+      logros: this.progreso.logros || [], // Incluir el array de logros
       logrosObtenidos: this.progreso.logros.length,
       ultimaActividad: this.progreso.ultimaActividad,
+      historialActividad: this.progreso.historialActividad || [], // Incluir historial de actividades
       progresoGeneral: this.escenariosHabilitados.length > 0 
         ? (this.progreso.escenariosCompletados.length / this.escenariosHabilitados.length) * 100 
         : 0

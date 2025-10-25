@@ -26,12 +26,12 @@ const VariableChangeVisualization: React.FC<VariableChangeVisualizationProps> = 
   const svgRef = useRef<SVGSVGElement>(null)
   const [svg, setSvg] = useState<any>(null)
   
-  // Configuración de la gráfica
+  // Configuracion de la grafica
   const margin = { top: 20, right: 20, bottom: 60, left: 60 }
   const innerWidth = width - margin.left - margin.right
   const innerHeight = height - margin.top - margin.bottom
   
-  // Dominio de la gráfica
+  // Dominio de la grafica
   const xDomain = [-4, 4]
   const yDomain = [-10, 10]
   
@@ -44,7 +44,7 @@ const VariableChangeVisualization: React.FC<VariableChangeVisualizationProps> = 
     .domain(yDomain)
     .range([innerHeight, 0])
 
-  // Configuración de transformaciones disponibles
+  // Configuracion de transformaciones disponibles
   const transformationConfigs: Record<string, {
     name: string
     formula: string
@@ -59,16 +59,16 @@ const VariableChangeVisualization: React.FC<VariableChangeVisualizationProps> = 
       formula: 'u = x + C',
       color: '#e74c3c',
       transformedColor: '#3498db',
-      description: 'Transformación lineal simple',
+      description: 'Transformacion lineal simple',
       calculateTransformation: (x: number, value: number) => x + value,
       calculateInverse: (u: number, value: number) => u - value
     },
     quadratic: {
-      name: 'Hada Cuadrática',
+      name: 'Hada Cuadratica',
       formula: 'u = x² + C',
       color: '#9b59b6',
       transformedColor: '#e67e22',
-      description: 'Transformación cuadrática',
+      description: 'Transformacion cuadratica',
       calculateTransformation: (x: number, value: number) => x * x + value,
       calculateInverse: (u: number, value: number) => Math.sqrt(u - value)
     },

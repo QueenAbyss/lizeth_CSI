@@ -7,8 +7,8 @@ import { AuthProvider } from "@/src/contexts/AuthContext"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "IntegraLearn - Reino Mágico de las Matemáticas",
-  description: "Plataforma interactiva de cálculo integral con arquitectura POO",
+  title: "IntegraLearn - Reino Magico de las Matematicas",
+  description: "Plataforma interactiva de calculo integral con arquitectura POO",
   generator: 'v0.app'
 }
 

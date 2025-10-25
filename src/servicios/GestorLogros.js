@@ -59,6 +59,49 @@ export class GestorLogros {
         raridad: 'raro'
       }),
 
+      // Logros específicos del Jardín de Riemann
+      new Logro({
+        id: 'jardin_explorador',
+        nombre: 'Explorador del Jardín',
+        descripcion: 'Explora las propiedades de las integrales en el Jardín de Riemann',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'jardin-riemann',
+          actividadesMinimas: 3
+        },
+        icono: '🌿',
+        puntos: 15,
+        raridad: 'comun'
+      }),
+
+      new Logro({
+        id: 'jardin_precision',
+        nombre: 'Precisión del Jardín',
+        descripcion: 'Alcanza una precisión del 95% en el Jardín de Riemann',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'jardin-riemann',
+          precisionMinima: 95
+        },
+        icono: '🎯',
+        puntos: 20,
+        raridad: 'raro'
+      }),
+
+      new Logro({
+        id: 'jardin_macetas',
+        nombre: 'Maestro de Macetas',
+        descripcion: 'Usa más de 10 macetas en el Jardín de Riemann',
+        tipo: 'especial',
+        criterios: { 
+          escenario: 'jardin-riemann',
+          macetasMinimas: 10
+        },
+        icono: '🪴',
+        puntos: 18,
+        raridad: 'raro'
+      }),
+
       new Logro({
         id: 'puente_crosser',
         nombre: 'Cruzador de Puentes',
@@ -221,7 +264,7 @@ export class GestorLogros {
     return logrosBase
   }
 
-  verificarLogrosEstudiante(estudianteId) {
+  verificarLogrosEstudiante(estudianteId, escenarioActual = null) {
     const usuarios = this.servicioAuth.obtenerTodosLosUsuarios()
     const estudiante = usuarios.find(u => u.id === estudianteId)
     
@@ -234,8 +277,30 @@ export class GestorLogros {
 
     for (const logro of this.logros) {
       if (logro.activo && !progreso.logros.includes(logro.id)) {
+        // Filtrar logros por escenario si se especifica
+        if (escenarioActual && logro.criterios) {
+          // Normalizar nombres de escenarios para comparación
+          const escenarioNormalizado = escenarioActual.replace('-', '').toLowerCase()
+          
+          // Para logros con escenario específico
+          if (logro.criterios.escenario) {
+            const logroEscenarioNormalizado = logro.criterios.escenario.replace('-', '').toLowerCase()
+            if (logroEscenarioNormalizado !== escenarioNormalizado) {
+              continue // Saltar logros de otros escenarios
+            }
+          }
+          
+          // Para logros de completitud que requieren escenarios específicos
+          if (logro.criterios.escenariosCompletados && logro.criterios.escenariosCompletados.length === 1) {
+            const escenarioRequerido = logro.criterios.escenariosCompletados[0].replace('-', '').toLowerCase()
+            if (escenarioRequerido !== escenarioNormalizado) {
+              continue // Saltar logros que requieren completar otros escenarios
+            }
+          }
+        }
+        
         if (logro.verificarCriterios(progreso)) {
-        logrosDesbloqueados.push(logro)
+          logrosDesbloqueados.push(logro)
           // Agregar logro al estudiante
           estudiante.agregarLogro(logro.id)
         }

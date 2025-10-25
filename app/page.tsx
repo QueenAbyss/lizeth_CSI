@@ -73,7 +73,7 @@ export default function Home() {
             <div className="flex justify-between items-start">
               <div>
                 <h1 className="text-4xl font-bold text-gray-800 mb-2">
-                  ¡Bienvenido al Bosque Mágico de Integrales! ✨
+                  ¡Bienvenido al Bosque Magico de Integrales! ✨
                 </h1>
                 <p className="text-gray-600 mb-4">
                   Explora los diferentes escenarios y aprende sobre integrales de manera interactiva
@@ -97,7 +97,7 @@ export default function Home() {
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
-                  Cerrar Sesión
+                  Cerrar Sesion
                 </Button>
               </div>
             </div>
@@ -210,14 +210,14 @@ export default function Home() {
 
         {/* Sección: ¿Cómo usar IntegraLearn? */}
         <div className="bg-white rounded-2xl shadow-sm p-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">¿Cómo usar IntegraLearn?</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">¿Como usar IntegraLearn?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Target className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="font-bold text-gray-800 mb-2">1. Selecciona un Escenario</h3>
-              <p className="text-sm text-gray-600">Elige el tema que quieres aprender o comienza tu aventura mágica</p>
+              <p className="text-sm text-gray-600">Elige el tema que quieres aprender o comienza tu aventura magica</p>
             </div>
 
             <div className="text-center">
@@ -225,14 +225,14 @@ export default function Home() {
                 <BookOpen className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="font-bold text-gray-800 mb-2">2. Modo Guiado o Libre</h3>
-              <p className="text-sm text-gray-600">Aprende paso a paso o explora libremente según tu preferencia</p>
+              <p className="text-sm text-gray-600">Aprende paso a paso o explora libremente segun tu preferencia</p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">🎯</span>
               </div>
-              <h3 className="font-bold text-gray-800 mb-2">3. Interactúa y Aprende</h3>
+              <h3 className="font-bold text-gray-800 mb-2">3. Interactua y Aprende</h3>
               <p className="text-sm text-gray-600">Manipula las simulaciones y recibe retroalimentación inmediata</p>
             </div>
           </div>
