@@ -48,7 +48,7 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
     return () => clearInterval(interval)
   }, [])
 
-  // Verificar logros cuando cambie la función o constante
+  // Verificar logros cuando cambie la función o constante (no cada segundo)
   useEffect(() => {
     const verificarLogros = () => {
       try {
@@ -67,7 +67,11 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
         // Verificar logros específicos del cristal
         const nuevosLogros = verificarLogrosCristal(datosCristal)
         if (nuevosLogros.length > 0) {
-          setLogrosDesbloqueados(prev => [...prev, ...nuevosLogros])
+          setLogrosDesbloqueados(prev => {
+            const logrosExistentes = prev.map(l => l.id)
+            const logrosNuevos = nuevosLogros.filter(l => !logrosExistentes.includes(l.id))
+            return [...prev, ...logrosNuevos]
+          })
           setMostrarLogros(true)
           
           // Ocultar logros después de 5 segundos
@@ -79,7 +83,42 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
     }
 
     verificarLogros()
-  }, [selectedFunction, constantC, showFamily, tiempoTranscurrido])
+  }, [selectedFunction, constantC, showFamily])
+
+  // Verificar logros específicos de tiempo (cada 10 segundos)
+  useEffect(() => {
+    if (tiempoTranscurrido > 0 && tiempoTranscurrido % 10 === 0) {
+      const verificarLogrosTiempo = () => {
+        try {
+          const usuarioActual = servicioAuth.obtenerUsuarioActual()
+          if (!usuarioActual) return
+
+          const datosCristal = {
+            funcionSeleccionada: selectedFunction,
+            constanteC: constantC,
+            tiempoEnVisualizacion: tiempoTranscurrido,
+            familiaVisible: showFamily
+          }
+
+          const nuevosLogros = verificarLogrosCristal(datosCristal)
+          if (nuevosLogros.length > 0) {
+            setLogrosDesbloqueados(prev => {
+              const logrosExistentes = prev.map(l => l.id)
+              const logrosNuevos = nuevosLogros.filter(l => !logrosExistentes.includes(l.id))
+              return [...prev, ...logrosNuevos]
+            })
+            setMostrarLogros(true)
+            
+            setTimeout(() => setMostrarLogros(false), 5000)
+          }
+        } catch (error) {
+          console.log('Error verificando logros de tiempo:', error)
+        }
+      }
+
+      verificarLogrosTiempo()
+    }
+  }, [tiempoTranscurrido])
 
   // Función para verificar logros específicos del cristal
   const verificarLogrosCristal = (datos: any) => {
