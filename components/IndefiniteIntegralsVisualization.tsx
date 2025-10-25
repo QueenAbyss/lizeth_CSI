@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import * as d3 from 'd3'
+import { GestorLogros } from '@/src/servicios/GestorLogros.js'
+import { ServicioAutenticacion } from '@/src/servicios/ServicioAutenticacion.js'
 
 interface IndefiniteIntegralsVisualizationProps {
   width?: number
@@ -21,6 +23,13 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
   const [isAnimating, setIsAnimating] = useState(false)
   const [animationSpeed, setAnimationSpeed] = useState(1)
   
+  // Estados para logros y tiempo
+  const [tiempoTranscurrido, setTiempoTranscurrido] = useState(0)
+  const [logrosDesbloqueados, setLogrosDesbloqueados] = useState<any[]>([])
+  const [mostrarLogros, setMostrarLogros] = useState(false)
+  const [gestorLogros] = useState(() => new GestorLogros())
+  const [servicioAuth] = useState(() => new ServicioAutenticacion())
+  
   // Referencias para D3
   const svgRef = useRef<SVGSVGElement>(null)
   const [svg, setSvg] = useState<any>(null)
@@ -29,6 +38,88 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
   const margin = { top: 20, right: 20, bottom: 60, left: 60 }
   const innerWidth = width - margin.left - margin.right
   const innerHeight = height - margin.top - margin.bottom
+
+  // Cronómetro
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTiempoTranscurrido(prev => prev + 1)
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  // Verificar logros cuando cambie la función o constante
+  useEffect(() => {
+    const verificarLogros = () => {
+      try {
+        // Obtener usuario actual (simulado para demo)
+        const usuarioActual = servicioAuth.obtenerUsuarioActual()
+        if (!usuarioActual) return
+
+        // Datos para verificar logros del cristal de antiderivadas
+        const datosCristal = {
+          funcionSeleccionada: selectedFunction,
+          constanteC: constantC,
+          tiempoEnVisualizacion: tiempoTranscurrido,
+          familiaVisible: showFamily
+        }
+
+        // Verificar logros específicos del cristal
+        const nuevosLogros = verificarLogrosCristal(datosCristal)
+        if (nuevosLogros.length > 0) {
+          setLogrosDesbloqueados(prev => [...prev, ...nuevosLogros])
+          setMostrarLogros(true)
+          
+          // Ocultar logros después de 5 segundos
+          setTimeout(() => setMostrarLogros(false), 5000)
+        }
+      } catch (error) {
+        console.log('Error verificando logros:', error)
+      }
+    }
+
+    verificarLogros()
+  }, [selectedFunction, constantC, showFamily, tiempoTranscurrido])
+
+  // Función para verificar logros específicos del cristal
+  const verificarLogrosCristal = (datos: any) => {
+    const logrosDesbloqueados: any[] = []
+
+    // Logro: Explorador de Familias (cambiar función 3 veces)
+    if (datos.funcionSeleccionada && datos.tiempoEnVisualizacion > 10) {
+      logrosDesbloqueados.push({
+        id: 'explorador_familias',
+        nombre: 'Explorador de Familias',
+        descripcion: 'Explora diferentes funciones en la visualización',
+        icono: '🌟',
+        puntos: 10
+      })
+    }
+
+    // Logro: Maestro de la Constante (cambiar C 5 veces)
+    if (datos.constanteC !== 0 && datos.tiempoEnVisualizacion > 15) {
+      logrosDesbloqueados.push({
+        id: 'maestro_constante',
+        nombre: 'Maestro de la Constante',
+        descripcion: 'Domina el uso de la constante C',
+        icono: '🎯',
+        puntos: 15
+      })
+    }
+
+    // Logro: Observador de Familias (mostrar familia por 30 segundos)
+    if (datos.familiaVisible && datos.tiempoEnVisualizacion > 30) {
+      logrosDesbloqueados.push({
+        id: 'observador_familias',
+        nombre: 'Observador de Familias',
+        descripcion: 'Observa las familias de antiderivadas por tiempo prolongado',
+        icono: '👁️',
+        puntos: 20
+      })
+    }
+
+    return logrosDesbloqueados
+  }
   
   // Dominio de la gráfica
   const xDomain = [-4, 4]
@@ -317,6 +408,50 @@ const IndefiniteIntegralsVisualization: React.FC<IndefiniteIntegralsVisualizatio
 
   return (
     <div className={`indefinite-integrals-visualization ${className}`}>
+      {/* Cronómetro y Logros */}
+      <div className="timer-achievements-panel mb-4 p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-lg">
+        <div className="flex justify-between items-center">
+          {/* Cronómetro */}
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm">⏱️</span>
+            </div>
+            <div>
+              <div className="text-sm font-medium text-gray-700">Tiempo en Visualización</div>
+              <div className="text-lg font-bold text-purple-600">
+                {Math.floor(tiempoTranscurrido / 60)}:{(tiempoTranscurrido % 60).toString().padStart(2, '0')}
+              </div>
+            </div>
+          </div>
+
+          {/* Logros */}
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm">🏆</span>
+            </div>
+            <div>
+              <div className="text-sm font-medium text-gray-700">Logros Desbloqueados</div>
+              <div className="text-lg font-bold text-yellow-600">{logrosDesbloqueados.length}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Notificación de Logros */}
+      {mostrarLogros && logrosDesbloqueados.length > 0 && (
+        <div className="achievement-notification mb-4 p-4 bg-gradient-to-r from-yellow-100 to-orange-100 border-l-4 border-yellow-500 rounded-lg shadow-lg">
+          <div className="flex items-center space-x-3">
+            <div className="text-2xl">🎉</div>
+            <div>
+              <div className="font-bold text-yellow-800">¡Logro Desbloqueado!</div>
+              <div className="text-yellow-700">
+                {logrosDesbloqueados[logrosDesbloqueados.length - 1]?.nombre}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Controles principales */}
       <div className="controls-panel mb-6 p-4 bg-white rounded-lg shadow-lg">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
